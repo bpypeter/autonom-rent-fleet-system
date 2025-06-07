@@ -2,219 +2,234 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { mockVehicles, mockReservations, mockPayments, mockClients } from '@/data/mockData';
-import { Car, Calendar, CreditCard, Users, TrendingUp, AlertTriangle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Car, Users, Calendar, CreditCard, TrendingUp, AlertTriangle } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
-  // Calculate statistics
-  const totalVehicles = mockVehicles.length;
-  const availableVehicles = mockVehicles.filter(v => v.status === 'available').length;
-  const rentedVehicles = mockVehicles.filter(v => v.status === 'rented').length;
-  const maintenanceVehicles = mockVehicles.filter(v => v.status === 'maintenance').length;
-
-  const totalReservations = mockReservations.length;
-  const activeReservations = mockReservations.filter(r => r.status === 'active').length;
-  const pendingReservations = mockReservations.filter(r => r.status === 'pending').length;
-
-  const totalRevenue = mockPayments
-    .filter(p => p.status === 'completed')
-    .reduce((sum, p) => sum + p.amount, 0);
-
-  const totalClients = mockClients.length;
-
-  const stats = [
-    {
-      title: 'Total Vehicule',
-      value: totalVehicles,
-      description: `${availableVehicles} disponibile`,
-      icon: Car,
-      color: 'text-blue-600'
-    },
-    {
-      title: 'Rezervări Active',
-      value: activeReservations,
-      description: `${pendingReservations} în așteptare`,
-      icon: Calendar,
-      color: 'text-green-600'
-    },
-    {
-      title: 'Venituri Totale',
-      value: `${totalRevenue.toLocaleString()} RON`,
-      description: 'Luna aceasta',
-      icon: CreditCard,
-      color: 'text-purple-600'
-    },
-    {
-      title: 'Clienți Înregistrați',
-      value: totalClients,
-      description: 'Baza de date',
-      icon: Users,
-      color: 'text-orange-600'
-    }
+  // Mock data pentru dashboard
+  const monthlyData = [
+    { name: 'Ian', rezervari: 45, venituri: 15000 },
+    { name: 'Feb', rezervari: 52, venituri: 18000 },
+    { name: 'Mar', rezervari: 48, venituri: 16500 },
+    { name: 'Apr', rezervari: 61, venituri: 21000 },
+    { name: 'Mai', rezervari: 55, venituri: 19000 },
+    { name: 'Iun', rezervari: 67, venituri: 23500 }
   ];
 
-  const fleetStatus = [
-    { status: 'Disponibile', count: availableVehicles, color: 'bg-green-500' },
-    { status: 'Închiriate', count: rentedVehicles, color: 'bg-blue-500' },
-    { status: 'Service', count: maintenanceVehicles, color: 'bg-yellow-500' },
-    { status: 'Inactive', count: mockVehicles.filter(v => v.status === 'inactive').length, color: 'bg-gray-500' }
+  const vehicleStatusData = [
+    { name: 'Disponibile', value: 15, color: '#10B981' },
+    { name: 'Închiriate', value: 8, color: '#3B82F6' },
+    { name: 'Service', value: 2, color: '#F59E0B' },
+    { name: 'Inactive', value: 1, color: '#6B7280' }
   ];
-
-  const recentReservations = mockReservations
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Dashboard Administrator</h1>
         <p className="text-muted-foreground">
-          Privire de ansamblu asupra activității AUTONOM
+          Prezentare generală a performanțelor sistemului
         </p>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.description}</p>
-            </CardContent>
-          </Card>
-        ))}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">26</div>
+                <p className="text-sm text-muted-foreground">Total Vehicule</p>
+              </div>
+              <Car className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="mt-2">
+              <Badge variant="outline" className="text-green-600">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                +5% vs luna trecută
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">124</div>
+                <p className="text-sm text-muted-foreground">Total Clienți</p>
+              </div>
+              <Users className="w-8 h-8 text-green-600" />
+            </div>
+            <div className="mt-2">
+              <Badge variant="outline" className="text-green-600">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                +12% vs luna trecută
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">67</div>
+                <p className="text-sm text-muted-foreground">Rezervări Luna Curentă</p>
+              </div>
+              <Calendar className="w-8 h-8 text-purple-600" />
+            </div>
+            <div className="mt-2">
+              <Badge variant="outline" className="text-green-600">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                +8% vs luna trecută
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">23,500</div>
+                <p className="text-sm text-muted-foreground">Venituri Luna (RON)</p>
+              </div>
+              <CreditCard className="w-8 h-8 text-yellow-600" />
+            </div>
+            <div className="mt-2">
+              <Badge variant="outline" className="text-green-600">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                +15% vs luna trecută
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
+      {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Fleet Status */}
+        {/* Monthly Performance Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Car className="w-5 h-5" />
-              Status Flotă
-            </CardTitle>
-            <CardDescription>
-              Distribuția vehiculelor pe statusuri
-            </CardDescription>
+            <CardTitle>Performanță Lunară</CardTitle>
+            <CardDescription>Rezervări și venituri pe ultimele 6 luni</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {fleetStatus.map((item, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                    <span className="text-sm font-medium">{item.status}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">{item.count} vehicule</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({((item.count / totalVehicles) * 100).toFixed(1)}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="rezervari" fill="#3B82F6" name="Rezervări" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Recent Reservations */}
+        {/* Vehicle Status Pie Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Rezervări Recente
-            </CardTitle>
-            <CardDescription>
-              Ultimele {recentReservations.length} rezervări create
-            </CardDescription>
+            <CardTitle>Status Vehicule</CardTitle>
+            <CardDescription>Distribuția actuală a statutului vehiculelor</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentReservations.map((reservation) => {
-                const client = mockClients.find(c => c.id === reservation.clientId);
-                const vehicle = mockVehicles.find(v => v.id === reservation.vehicleId);
-                
-                const statusColors = {
-                  pending: 'bg-yellow-100 text-yellow-800',
-                  confirmed: 'bg-blue-100 text-blue-800',
-                  active: 'bg-green-100 text-green-800',
-                  completed: 'bg-gray-100 text-gray-800',
-                  cancelled: 'bg-red-100 text-red-800'
-                };
-
-                return (
-                  <div key={reservation.id} className="flex items-start justify-between p-3 border rounded-lg">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">{reservation.code}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {client?.name} • {vehicle?.brand} {vehicle?.model}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {reservation.startDate} - {reservation.endDate}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <Badge className={statusColors[reservation.status]} variant="secondary">
-                        {reservation.status}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {reservation.totalAmount} RON
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={vehicleStatusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {vehicleStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
 
-      {/* Alerts Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-yellow-600" />
-            Alerte și Notificări
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-yellow-600" />
-              <div>
-                <p className="text-sm font-medium">Vehicule în service</p>
-                <p className="text-xs text-muted-foreground">
-                  {maintenanceVehicles} vehicule necesită atenție
-                </p>
+      {/* Recent Activities and Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Activități Recente</CardTitle>
+            <CardDescription>Ultimele acțiuni din sistem</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="text-sm">
+                  <span className="font-medium">Ion Popescu</span> a creat o rezervare nouă
+                  <div className="text-muted-foreground text-xs">Acum 2 ore</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="text-sm">
+                  <span className="font-medium">Toyota Corolla (B-123-ABC)</span> a fost returnată
+                  <div className="text-muted-foreground text-xs">Acum 4 ore</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="text-sm">
+                  <span className="font-medium">Maria Ionescu</span> s-a înregistrat ca client nou
+                  <div className="text-muted-foreground text-xs">Ieri</div>
+                </div>
               </div>
             </div>
-            
-            <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium">Rezervări în așteptare</p>
-                <p className="text-xs text-muted-foreground">
-                  {pendingReservations} rezervări așteaptă confirmare
-                </p>
-              </div>
-            </div>
+          </CardContent>
+        </Card>
 
-            <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <TrendingUp className="w-4 h-4 text-green-600" />
-              <div>
-                <p className="text-sm font-medium">Performanță bună</p>
-                <p className="text-xs text-muted-foreground">
-                  Rata de utilizare a flotei: {((rentedVehicles / totalVehicles) * 100).toFixed(1)}%
-                </p>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              Alerte și Notificări
+            </CardTitle>
+            <CardDescription>Situații care necesită atenție</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="text-sm font-medium text-yellow-800">
+                  2 vehicule necesită service programat
+                </div>
+                <div className="text-xs text-yellow-600 mt-1">
+                  Ford Focus și BMW X3 au depășit kilometrajul pentru service
+                </div>
+              </div>
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="text-sm font-medium text-blue-800">
+                  5 rezervări expiră mâine
+                </div>
+                <div className="text-xs text-blue-600 mt-1">
+                  Verificați returnările programate pentru 02.12.2024
+                </div>
+              </div>
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="text-sm font-medium text-green-800">
+                  Sistem funcționează normal
+                </div>
+                <div className="text-xs text-green-600 mt-1">
+                  Toate serviciile sunt operaționale
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,15 +1,14 @@
 
 import React, { useState } from 'react';
-import { Vehicle, Client } from '@/types';
-import { mockClients } from '@/data/mockData';
+import { Vehicle } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CalendarDays, Car, User, CreditCard } from 'lucide-react';
+import { CalendarDays, Car, CreditCard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface ReservationFormProps {
   selectedVehicle: Vehicle | null;
@@ -23,12 +22,14 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
   const { user } = useAuth();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [selectedClientId, setSelectedClientId] = useState('');
 
   const calculateDays = () => {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
+    
+    if (end <= start) return 0;
+    
     const diffTime = Math.abs(end.getTime() - start.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
@@ -39,14 +40,22 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedVehicle || !startDate || !endDate) return;
+    if (!selectedVehicle || !startDate || !endDate) {
+      toast.error('Vă rugăm să completați toate câmpurile');
+      return;
+    }
+
+    if (totalDays <= 0) {
+      toast.error('Data de sfârșit trebuie să fie după data de început');
+      return;
+    }
 
     const reservationCode = `REZ${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     
     const reservationData = {
       code: reservationCode,
       vehicle: selectedVehicle,
-      clientId: user?.role === 'client' ? user.id : selectedClientId,
+      clientId: user?.id,
       startDate,
       endDate,
       totalDays,
@@ -100,25 +109,6 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
             </div>
           </div>
 
-          {/* Client Selection (for operators/admins) */}
-          {user?.role !== 'client' && (
-            <div className="space-y-2">
-              <Label htmlFor="client">Client</Label>
-              <Select value={selectedClientId} onValueChange={setSelectedClientId} required>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selectați clientul" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockClients.map(client => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.name} ({client.code})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
           {/* Date Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -169,7 +159,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
             </>
           )}
 
-          <Button type="submit" className="w-full" disabled={!totalDays}>
+          <Button type="submit" className="w-full" disabled={totalDays <= 0}>
             <CreditCard className="w-4 h-4 mr-2" />
             Creează Rezervarea
           </Button>

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
@@ -49,6 +50,7 @@ const menuItems = {
 
 export const AppSidebar: React.FC = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const items = user ? menuItems[user.role] : [];
 
   return (
@@ -60,11 +62,11 @@ export const AppSidebar: React.FC = () => {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url} className="flex items-center gap-2">
+                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
+                    <Link to={item.url} className="flex items-center gap-2">
                       <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
