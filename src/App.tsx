@@ -8,7 +8,7 @@ import { ClientProvider } from '@/contexts/ClientContext';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { Layout } from '@/components/Layout';
-import { Index } from '@/pages/Index';
+import Index from '@/pages/Index';
 import { VehiclesPage } from '@/pages/VehiclesPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { AllReservationsPage } from '@/pages/AllReservationsPage';
@@ -21,7 +21,7 @@ import { MyReservationsPage } from '@/pages/MyReservationsPage';
 import { VehicleReturnsPage } from '@/pages/VehicleReturnsPage';
 import { HistoryPage } from '@/pages/HistoryPage';
 import { FeedbackPage } from '@/pages/FeedbackPage';
-import { NotFound } from '@/pages/NotFound';
+import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
 
