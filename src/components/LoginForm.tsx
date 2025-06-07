@@ -30,12 +30,6 @@ export const LoginForm: React.FC = () => {
     setIsLoading(false);
   };
 
-  const demoAccounts = [
-    { username: 'client', password: 'client', role: 'Client' },
-    { username: 'operator', password: 'operator', role: 'Operator Flotă' },
-    { username: 'admin', password: 'admin', role: 'Administrator' }
-  ];
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
@@ -95,27 +89,13 @@ export const LoginForm: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Demo Accounts */}
+        {/* Help Text */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Conturi de demonstrație</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {demoAccounts.map((account) => (
-              <div key={account.username} className="flex justify-between items-center p-2 bg-muted rounded">
-                <span className="text-sm font-medium">{account.role}</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setUsername(account.username);
-                    setPassword(account.password);
-                  }}
-                >
-                  {account.username} / {account.password}
-                </Button>
-              </div>
-            ))}
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground text-center">
+              Pentru testare, utilizați conturile: <br />
+              <strong>client/client</strong>, <strong>operator/operator</strong>, <strong>admin/admin</strong>
+            </p>
           </CardContent>
         </Card>
       </div>

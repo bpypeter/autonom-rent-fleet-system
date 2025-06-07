@@ -9,6 +9,16 @@ import { Layout } from '@/components/Layout';
 import { LoginForm } from '@/components/LoginForm';
 import { VehiclesPage } from '@/pages/VehiclesPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { AllReservationsPage } from '@/pages/AllReservationsPage';
+import { FleetManagementPage } from '@/pages/FleetManagementPage';
+import { PaymentsPage } from '@/pages/PaymentsPage';
+import { ClientsManagementPage } from '@/pages/ClientsManagementPage';
+import { ReportsPage } from '@/pages/ReportsPage';
+import { MyReservationsPage } from '@/pages/MyReservationsPage';
+import { VehicleReturnsPage } from '@/pages/VehicleReturnsPage';
+import { HistoryPage } from '@/pages/HistoryPage';
+import { FeedbackPage } from '@/pages/FeedbackPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,10 +84,7 @@ const AppRoutes: React.FC = () => {
         path="/reservations" 
         element={
           <ProtectedRoute allowedRoles={['client', 'operator', 'admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Rezervările Mele</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <MyReservationsPage />
           </ProtectedRoute>
         } 
       />
@@ -85,10 +92,7 @@ const AppRoutes: React.FC = () => {
         path="/history" 
         element={
           <ProtectedRoute allowedRoles={['client']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Istoricul Rezervărilor</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <HistoryPage />
           </ProtectedRoute>
         } 
       />
@@ -96,10 +100,7 @@ const AppRoutes: React.FC = () => {
         path="/feedback" 
         element={
           <ProtectedRoute allowedRoles={['client']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Feedback</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <FeedbackPage />
           </ProtectedRoute>
         } 
       />
@@ -109,7 +110,7 @@ const AppRoutes: React.FC = () => {
         path="/fleet" 
         element={
           <ProtectedRoute allowedRoles={['operator', 'admin']}>
-            <VehiclesPage />
+            <FleetManagementPage />
           </ProtectedRoute>
         } 
       />
@@ -117,10 +118,7 @@ const AppRoutes: React.FC = () => {
         path="/returns" 
         element={
           <ProtectedRoute allowedRoles={['operator', 'admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Returnări Vehicule</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <VehicleReturnsPage />
           </ProtectedRoute>
         } 
       />
@@ -128,10 +126,7 @@ const AppRoutes: React.FC = () => {
         path="/clients" 
         element={
           <ProtectedRoute allowedRoles={['operator', 'admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Gestionare Clienți</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <ClientsManagementPage />
           </ProtectedRoute>
         } 
       />
@@ -149,10 +144,7 @@ const AppRoutes: React.FC = () => {
         path="/all-reservations" 
         element={
           <ProtectedRoute allowedRoles={['admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Toate Rezervările</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <AllReservationsPage />
           </ProtectedRoute>
         } 
       />
@@ -160,10 +152,7 @@ const AppRoutes: React.FC = () => {
         path="/payments" 
         element={
           <ProtectedRoute allowedRoles={['admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Gestionare Plăți</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <PaymentsPage />
           </ProtectedRoute>
         } 
       />
@@ -171,10 +160,7 @@ const AppRoutes: React.FC = () => {
         path="/reports" 
         element={
           <ProtectedRoute allowedRoles={['admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Rapoarte</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <ReportsPage />
           </ProtectedRoute>
         } 
       />
@@ -182,10 +168,7 @@ const AppRoutes: React.FC = () => {
         path="/settings" 
         element={
           <ProtectedRoute allowedRoles={['admin']}>
-            <div className="p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Setări Sistem</h1>
-              <p className="text-muted-foreground">Această pagină va fi implementată în curând.</p>
-            </div>
+            <SettingsPage />
           </ProtectedRoute>
         } 
       />
