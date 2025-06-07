@@ -27,8 +27,8 @@ export const VehiclesTable: React.FC<VehiclesTableProps> = ({
   showAvailableOnly = false 
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [brandFilter, setBrandFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [brandFilter, setBrandFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredVehicles = mockVehicles.filter(vehicle => {
     const matchesSearch = 
@@ -36,8 +36,8 @@ export const VehiclesTable: React.FC<VehiclesTableProps> = ({
       vehicle.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vehicle.licensePlate.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesBrand = !brandFilter || vehicle.brand === brandFilter;
-    const matchesStatus = !statusFilter || vehicle.status === statusFilter;
+    const matchesBrand = brandFilter === 'all' || vehicle.brand === brandFilter;
+    const matchesStatus = statusFilter === 'all' || vehicle.status === statusFilter;
     const matchesAvailable = !showAvailableOnly || vehicle.status === 'available';
 
     return matchesSearch && matchesBrand && matchesStatus && matchesAvailable;
@@ -92,7 +92,7 @@ export const VehiclesTable: React.FC<VehiclesTableProps> = ({
               <SelectValue placeholder="Toate mărcile" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toate mărcile</SelectItem>
+              <SelectItem value="all">Toate mărcile</SelectItem>
               {uniqueBrands.map(brand => (
                 <SelectItem key={brand} value={brand}>{brand}</SelectItem>
               ))}
@@ -104,7 +104,7 @@ export const VehiclesTable: React.FC<VehiclesTableProps> = ({
                 <SelectValue placeholder="Toate statusurile" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toate statusurile</SelectItem>
+                <SelectItem value="all">Toate statusurile</SelectItem>
                 <SelectItem value="available">Disponibil</SelectItem>
                 <SelectItem value="rented">Închiriat</SelectItem>
                 <SelectItem value="maintenance">Service</SelectItem>
@@ -112,13 +112,13 @@ export const VehiclesTable: React.FC<VehiclesTableProps> = ({
               </SelectContent>
             </Select>
           )}
-          {(searchTerm || brandFilter || statusFilter) && (
+          {(searchTerm || brandFilter !== 'all' || statusFilter !== 'all') && (
             <Button
               variant="outline"
               onClick={() => {
                 setSearchTerm('');
-                setBrandFilter('');
-                setStatusFilter('');
+                setBrandFilter('all');
+                setStatusFilter('all');
               }}
             >
               <Filter className="w-4 h-4 mr-2" />
