@@ -6,41 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AddClientForm } from '@/components/AddClientForm';
+import { ClientDetailsModal } from '@/components/ClientDetailsModal';
+import { useClients } from '@/contexts/ClientContext';
 import { Search, Filter, Plus, Eye, Edit, Phone, Mail, Users } from 'lucide-react';
 
 export const ClientsManagementPage: React.FC = () => {
+  const { clients } = useClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [showClientDetails, setShowClientDetails] = useState(false);
 
-  // Mock data pentru clienți
-  const mockClients = [
-    {
-      id: '1',
-      numeComplet: 'Ion Popescu',
-      email: 'ion.popescu@email.com',
-      telefon: '0712345678',
-      cnp: '1234567890123',
-      nrCarteIdentitate: 'AB123456',
-      permisConducere: 'B',
-      dataInregistrare: '2024-01-15',
-      rezervariActive: 1,
-      totalRezervari: 5
-    },
-    {
-      id: '2',
-      numeComplet: 'Maria Ionescu',
-      email: 'maria.ionescu@email.com',
-      telefon: '0787654321',
-      cnp: '2345678901234',
-      nrCarteIdentitate: 'CD789012',
-      permisConducere: 'B',
-      dataInregistrare: '2024-02-20',
-      rezervariActive: 0,
-      totalRezervari: 3
-    }
-  ];
-
-  const filteredClients = mockClients.filter(client => {
+  const filteredClients = clients.filter(client => {
     const matchesSearch = 
       client.numeComplet.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -48,6 +25,11 @@ export const ClientsManagementPage: React.FC = () => {
     
     return matchesSearch;
   });
+
+  const handleViewClient = (client: any) => {
+    setSelectedClient(client);
+    setShowClientDetails(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -75,7 +57,7 @@ export const ClientsManagementPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">{mockClients.length}</div>
+                <div className="text-2xl font-bold">{clients.length}</div>
                 <p className="text-sm text-muted-foreground">Total Clienți</p>
               </div>
               <Users className="w-8 h-8 text-blue-600" />
@@ -85,7 +67,7 @@ export const ClientsManagementPage: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="text-2xl font-bold text-green-600">
-              {mockClients.filter(c => c.rezervariActive > 0).length}
+              {clients.filter(c => c.rezervariActive > 0).length}
             </div>
             <p className="text-sm text-muted-foreground">Clienți Activi</p>
           </CardContent>
@@ -93,7 +75,7 @@ export const ClientsManagementPage: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="text-2xl font-bold text-purple-600">
-              {mockClients.reduce((sum, c) => sum + c.totalRezervari, 0)}
+              {clients.reduce((sum, c) => sum + c.totalRezervari, 0)}
             </div>
             <p className="text-sm text-muted-foreground">Total Rezervări</p>
           </CardContent>
@@ -178,7 +160,7 @@ export const ClientsManagementPage: React.FC = () => {
                     <TableCell>{client.dataInregistrare}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => handleViewClient(client)}>
                           <Eye className="w-4 h-4" />
                         </Button>
                         <Button size="sm" variant="outline">
@@ -199,6 +181,15 @@ export const ClientsManagementPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      <ClientDetailsModal
+        client={selectedClient}
+        isOpen={showClientDetails}
+        onClose={() => {
+          setShowClientDetails(false);
+          setSelectedClient(null);
+        }}
+      />
     </div>
   );
 };

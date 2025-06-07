@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { UserPlus } from 'lucide-react';
+import { useClients } from '@/contexts/ClientContext';
 import { toast } from 'sonner';
 
 interface AddClientFormProps {
@@ -12,6 +13,7 @@ interface AddClientFormProps {
 }
 
 export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded }) => {
+  const { addClient } = useClients();
   const [formData, setFormData] = useState({
     numeComplet: '',
     cnp: '',
@@ -38,8 +40,16 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded }) =
       return;
     }
 
-    // Simulare salvare client
-    console.log('Client nou:', formData);
+    const newClient = {
+      id: `client_${Date.now()}`,
+      ...formData,
+      dataInregistrare: new Date().toISOString().split('T')[0],
+      rezervariActive: 0,
+      totalRezervari: 0
+    };
+
+    addClient(newClient);
+    console.log('Client nou:', newClient);
     toast.success('Clientul a fost adăugat cu succes!');
     
     // Reset form

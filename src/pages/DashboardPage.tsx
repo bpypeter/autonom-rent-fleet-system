@@ -4,8 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Car, Users, Calendar, CreditCard, TrendingUp, AlertTriangle } from 'lucide-react';
+import { mockVehicles } from '@/data/mockData';
+import { useClients } from '@/contexts/ClientContext';
+import { useReservations } from '@/contexts/ReservationContext';
 
 export const DashboardPage: React.FC = () => {
+  const { clients } = useClients();
+  const { reservations } = useReservations();
+
   // Mock data pentru dashboard
   const monthlyData = [
     { name: 'Ian', rezervari: 45, venituri: 15000 },
@@ -17,11 +23,14 @@ export const DashboardPage: React.FC = () => {
   ];
 
   const vehicleStatusData = [
-    { name: 'Disponibile', value: 15, color: '#10B981' },
-    { name: 'Închiriate', value: 8, color: '#3B82F6' },
-    { name: 'Service', value: 2, color: '#F59E0B' },
-    { name: 'Inactive', value: 1, color: '#6B7280' }
+    { name: 'Disponibile', value: mockVehicles.filter(v => v.status === 'available').length, color: '#10B981' },
+    { name: 'Închiriate', value: mockVehicles.filter(v => v.status === 'rented').length, color: '#3B82F6' },
+    { name: 'Service', value: mockVehicles.filter(v => v.status === 'maintenance').length, color: '#F59E0B' },
+    { name: 'Inactive', value: mockVehicles.filter(v => v.status === 'inactive').length, color: '#6B7280' }
   ];
+
+  const currentMonthReservations = reservations.length;
+  const totalRevenue = reservations.reduce((sum, r) => sum + r.totalAmount, 0);
 
   return (
     <div className="space-y-6">
@@ -38,7 +47,7 @@ export const DashboardPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">26</div>
+                <div className="text-2xl font-bold">{mockVehicles.length}</div>
                 <p className="text-sm text-muted-foreground">Total Vehicule</p>
               </div>
               <Car className="w-8 h-8 text-blue-600" />
@@ -56,7 +65,7 @@ export const DashboardPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">124</div>
+                <div className="text-2xl font-bold">{clients.length}</div>
                 <p className="text-sm text-muted-foreground">Total Clienți</p>
               </div>
               <Users className="w-8 h-8 text-green-600" />
@@ -74,7 +83,7 @@ export const DashboardPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">67</div>
+                <div className="text-2xl font-bold">{currentMonthReservations}</div>
                 <p className="text-sm text-muted-foreground">Rezervări Luna Curentă</p>
               </div>
               <Calendar className="w-8 h-8 text-purple-600" />
@@ -92,7 +101,7 @@ export const DashboardPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">23,500</div>
+                <div className="text-2xl font-bold">{totalRevenue.toLocaleString()}</div>
                 <p className="text-sm text-muted-foreground">Venituri Luna (RON)</p>
               </div>
               <CreditCard className="w-8 h-8 text-yellow-600" />

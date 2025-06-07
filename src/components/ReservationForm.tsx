@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { CalendarDays, Car, CreditCard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useReservations } from '@/contexts/ReservationContext';
 import { toast } from 'sonner';
 
 interface ReservationFormProps {
@@ -20,6 +21,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
   onReservationComplete
 }) => {
   const { user } = useAuth();
+  const { addReservation } = useReservations();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -53,16 +55,28 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
     const reservationCode = `REZ${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     
     const reservationData = {
+      id: `reservation_${Date.now()}`,
       code: reservationCode,
-      vehicle: selectedVehicle,
-      clientId: user?.id,
+      vehicleId: selectedVehicle.id,
+      clientId: user?.id || '1',
       startDate,
       endDate,
       totalDays,
       totalAmount,
+      status: 'confirmed',
       createdAt: new Date().toISOString()
     };
 
+    // Adaugă rezervarea în context
+    addReservation(reservationData);
+
+    console.log('Reservation created:', reservationData);
+    toast.success(`Rezervarea ${reservationCode} a fost creată cu succes!`);
+    
+    // Reset form
+    setStartDate('');
+    setEndDate('');
+    
     onReservationComplete(reservationData);
   };
 

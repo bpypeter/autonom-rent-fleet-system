@@ -6,13 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { InvoiceModal } from '@/components/InvoiceModal';
 import { mockPayments, mockReservations, mockClients } from '@/data/mockData';
-import { Search, Filter, Download, CreditCard, DollarSign, TrendingUp } from 'lucide-react';
+import { Search, Filter, Download, CreditCard, DollarSign, TrendingUp, FileText, Eye } from 'lucide-react';
 
 export const PaymentsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [showInvoice, setShowInvoice] = useState(false);
 
   const filteredPayments = mockPayments.filter(payment => {
     const reservation = mockReservations.find(r => r.id === payment.reservationId);
@@ -66,6 +69,23 @@ export const PaymentsPage: React.FC = () => {
         {labels[method as keyof typeof labels]}
       </Badge>
     );
+  };
+
+  const handleViewInvoice = (payment: any) => {
+    const reservation = mockReservations.find(r => r.id === payment.reservationId);
+    const client = mockClients.find(c => c.id === reservation?.clientId);
+    
+    const invoice = {
+      id: payment.id,
+      number: `INV-${payment.code}`,
+      clientName: client?.name || 'Client Necunoscut',
+      amount: payment.amount,
+      date: payment.createdAt,
+      reservationCode: reservation?.code || 'N/A'
+    };
+    
+    setSelectedInvoice(invoice);
+    setShowInvoice(true);
   };
 
   return (
@@ -194,6 +214,7 @@ export const PaymentsPage: React.FC = () => {
                   <TableHead>Metodă</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Data</TableHead>
+                  <TableHead>Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -217,6 +238,16 @@ export const PaymentsPage: React.FC = () => {
                       <TableCell>{getMethodBadge(payment.method)}</TableCell>
                       <TableCell>{getStatusBadge(payment.status)}</TableCell>
                       <TableCell>{payment.createdAt}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline" onClick={() => handleViewInvoice(payment)}>
+                            <FileText className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -225,6 +256,15 @@ export const PaymentsPage: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      <InvoiceModal
+        invoice={selectedInvoice}
+        isOpen={showInvoice}
+        onClose={() => {
+          setShowInvoice(false);
+          setSelectedInvoice(null);
+        }}
+      />
     </div>
   );
 };
