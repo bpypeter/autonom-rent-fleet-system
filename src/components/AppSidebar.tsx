@@ -30,7 +30,7 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: BarChart3,
-      roles: ['admin', 'operator']  // Removed 'client' from here
+      roles: ['admin', 'operator']
     },
     {
       title: "Vehicule",
@@ -42,7 +42,7 @@ const data = {
       title: "Rezervările Mele",
       url: "/reservations",
       icon: Calendar,
-      roles: ['client']  // Only for clients
+      roles: ['client']
     },
     {
       title: "Toate Rezervările",
@@ -84,13 +84,13 @@ const data = {
       title: "Istoric",
       url: "/history",
       icon: History,
-      roles: ['client']  // Only for clients now
+      roles: ['client']
     },
     {
       title: "Feedback",
       url: "/feedback",
       icon: MessageSquare,
-      roles: ['client']  // Only for clients now
+      roles: ['client']
     },
     {
       title: "Setări",
@@ -101,18 +101,33 @@ const data = {
   ]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const MemoizedSidebarMenuItem = React.memo(({ item }: { item: typeof data.navMain[0] }) => (
+  <SidebarMenuItem>
+    <SidebarMenuButton asChild>
+      <a href={item.url}>
+        <item.icon />
+        <span>{item.title}</span>
+      </a>
+    </SidebarMenuButton>
+  </SidebarMenuItem>
+));
+
+MemoizedSidebarMenuItem.displayName = 'MemoizedSidebarMenuItem';
+
+export const AppSidebar = React.memo(({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
-  const handleLogout = () => {
+  const handleLogout = React.useCallback(() => {
     logout()
     navigate('/login')
-  }
+  }, [logout, navigate]);
 
-  const filteredNavItems = data.navMain.filter(item => 
-    user?.role && item.roles.includes(user.role)
-  )
+  const filteredNavItems = React.useMemo(() => 
+    data.navMain.filter(item => 
+      user?.role && item.roles.includes(user.role)
+    ), [user?.role]
+  );
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -139,14 +154,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <MemoizedSidebarMenuItem key={item.title} item={item} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -187,4 +195,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
     </Sidebar>
   )
-}
+});
+
+AppSidebar.displayName = 'AppSidebar';

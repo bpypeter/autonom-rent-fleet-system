@@ -5,7 +5,7 @@ interface MyReservationsHeaderProps {
   userRole?: string;
 }
 
-export const MyReservationsHeader: React.FC<MyReservationsHeaderProps> = ({ userRole }) => {
+export const MyReservationsHeader: React.FC<MyReservationsHeaderProps> = React.memo(({ userRole }) => {
   return (
     <div className="space-y-1 sm:space-y-2">
       <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
@@ -19,4 +19,6 @@ export const MyReservationsHeader: React.FC<MyReservationsHeaderProps> = ({ user
       </p>
     </div>
   );
-};
+});
+
+MyReservationsHeader.displayName = 'MyReservationsHeader';

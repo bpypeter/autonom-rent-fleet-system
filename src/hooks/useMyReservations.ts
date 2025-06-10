@@ -8,36 +8,19 @@ export const useMyReservations = () => {
   const { user } = useAuth();
 
   const userReservations = useMemo(() => {
-    // Debug logging
-    console.log('useMyReservations - DEBUG START');
-    console.log('useMyReservations - Current user:', user);
-    console.log('useMyReservations - User username:', user?.username);
-    console.log('useMyReservations - User role:', user?.role);
-    console.log('useMyReservations - All reservations from context:', reservations);
+    if (!user?.username) {
+      console.log('useMyReservations - No user username available');
+      return [];
+    }
     
-    // Check each reservation individually
-    reservations.forEach((reservation, index) => {
-      console.log(`useMyReservations - Reservation ${index}:`, {
-        id: reservation.id,
-        clientId: reservation.clientId,
-        code: reservation.code,
-        matchesUser: reservation.clientId === user?.username
-      });
-    });
-
     // Filter reservations based on user role - Use username for matching
-    const filtered = user?.role === 'admin' 
+    const filtered = user.role === 'admin' 
       ? reservations 
-      : reservations.filter(reservation => {
-          console.log(`useMyReservations - Filtering reservation ${reservation.code}: clientId=${reservation.clientId}, username=${user?.username}, matches=${reservation.clientId === user?.username}`);
-          return reservation.clientId === user?.username;
-        });
+      : reservations.filter(reservation => reservation.clientId === user.username);
 
-    console.log('useMyReservations - User reservations after filtering:', filtered);
-    console.log('useMyReservations - DEBUG END');
-
+    console.log(`useMyReservations - Filtered ${filtered.length} reservations for user ${user.username} (${user.role})`);
     return filtered;
-  }, [reservations, user]);
+  }, [reservations, user?.username, user?.role]);
 
   return {
     userReservations,
