@@ -4,13 +4,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Car, Users, Calendar, CreditCard, TrendingUp, AlertTriangle } from 'lucide-react';
-import { mockVehicles } from '@/data/mockData';
+import { mockVehicles, mockReservations } from '@/data/mockData';
 import { useClients } from '@/contexts/ClientContext';
-import { useReservations } from '@/contexts/ReservationContext';
 
 export const DashboardPage: React.FC = () => {
   const { clients } = useClients();
-  const { reservations } = useReservations();
+
+  // Calculate current month reservations
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+  
+  const currentMonthReservations = mockReservations.filter(reservation => {
+    const reservationDate = new Date(reservation.startDate);
+    return reservationDate.getMonth() === currentMonth && reservationDate.getFullYear() === currentYear;
+  }).length;
+
+  const totalRevenue = mockReservations
+    .filter(reservation => {
+      const reservationDate = new Date(reservation.startDate);
+      return reservationDate.getMonth() === currentMonth && reservationDate.getFullYear() === currentYear;
+    })
+    .reduce((sum, r) => sum + r.totalAmount, 0);
 
   // Mock data pentru dashboard
   const monthlyData = [
@@ -19,7 +34,7 @@ export const DashboardPage: React.FC = () => {
     { name: 'Mar', rezervari: 48, venituri: 16500 },
     { name: 'Apr', rezervari: 61, venituri: 21000 },
     { name: 'Mai', rezervari: 55, venituri: 19000 },
-    { name: 'Iun', rezervari: 67, venituri: 23500 }
+    { name: 'Iun', rezervari: currentMonthReservations, venituri: totalRevenue }
   ];
 
   const vehicleStatusData = [
@@ -28,9 +43,6 @@ export const DashboardPage: React.FC = () => {
     { name: 'Service', value: mockVehicles.filter(v => v.status === 'maintenance').length, color: '#F59E0B' },
     { name: 'Inactive', value: mockVehicles.filter(v => v.status === 'inactive').length, color: '#6B7280' }
   ];
-
-  const currentMonthReservations = reservations.length;
-  const totalRevenue = reservations.reduce((sum, r) => sum + r.totalAmount, 0);
 
   return (
     <div className="space-y-6">

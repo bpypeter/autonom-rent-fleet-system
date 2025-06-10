@@ -25,6 +25,11 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded }) =
   });
 
   const handleInputChange = (field: string, value: string) => {
+    // Validare pentru cartea de identitate - maxim 8 caractere
+    if (field === 'nrCarteIdentitate' && value.length > 8) {
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -103,12 +108,13 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded }) =
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="nrCarteIdentitate">Nr. Carte Identitate</Label>
+              <Label htmlFor="nrCarteIdentitate">Nr. Carte Identitate (max 8 caractere)</Label>
               <Input
                 id="nrCarteIdentitate"
                 value={formData.nrCarteIdentitate}
                 onChange={(e) => handleInputChange('nrCarteIdentitate', e.target.value)}
                 placeholder="AB123456"
+                maxLength={8}
               />
             </div>
             

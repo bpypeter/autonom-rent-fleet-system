@@ -6,13 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { VehicleDetailsModal } from '@/components/VehicleDetailsModal';
 import { mockVehicles } from '@/data/mockData';
-import { Search, Filter, Plus, Edit, Eye, Settings } from 'lucide-react';
+import { Search, Filter, Plus, Edit, Eye, Settings, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const FleetManagementPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [brandFilter, setBrandFilter] = useState('all');
+  const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
+  const [showVehicleDetails, setShowVehicleDetails] = useState(false);
 
   const filteredVehicles = mockVehicles.filter(vehicle => {
     const matchesSearch = 
@@ -49,6 +53,19 @@ export const FleetManagementPage: React.FC = () => {
         {labels[status as keyof typeof labels]}
       </Badge>
     );
+  };
+
+  const handleViewVehicle = (vehicle: any) => {
+    setSelectedVehicle(vehicle);
+    setShowVehicleDetails(true);
+  };
+
+  const handleEditVehicle = (vehicle: any) => {
+    toast.info(`Editare vehicul ${vehicle.code} - Funcționalitate în dezvoltare`);
+  };
+
+  const handleDeleteVehicle = (vehicle: any) => {
+    toast.error(`Ștergere vehicul ${vehicle.code} - Funcționalitate în dezvoltare`);
   };
 
   return (
@@ -188,14 +205,29 @@ export const FleetManagementPage: React.FC = () => {
                     <TableCell className="font-medium">{vehicle.dailyRate} RON</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleViewVehicle(vehicle)}
+                          title="Vizualizează detalii"
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleEditVehicle(vehicle)}
+                          title="Editează vehiculul"
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="outline">
-                          <Settings className="w-4 h-4" />
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleDeleteVehicle(vehicle)}
+                          title="Șterge vehiculul"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -206,6 +238,15 @@ export const FleetManagementPage: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      <VehicleDetailsModal
+        vehicle={selectedVehicle}
+        isOpen={showVehicleDetails}
+        onClose={() => {
+          setShowVehicleDetails(false);
+          setSelectedVehicle(null);
+        }}
+      />
     </div>
   );
 };

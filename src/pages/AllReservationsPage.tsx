@@ -6,12 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
 import { mockReservations, mockClients, mockVehicles } from '@/data/mockData';
 import { Search, Filter, Eye, Edit, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const AllReservationsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedReservation, setSelectedReservation] = useState<any>(null);
+  const [showReservationDetails, setShowReservationDetails] = useState(false);
 
   const filteredReservations = mockReservations.filter(reservation => {
     const client = mockClients.find(c => c.id === reservation.clientId);
@@ -50,6 +54,19 @@ export const AllReservationsPage: React.FC = () => {
         {labels[status as keyof typeof labels]}
       </Badge>
     );
+  };
+
+  const handleViewReservation = (reservation: any) => {
+    setSelectedReservation(reservation);
+    setShowReservationDetails(true);
+  };
+
+  const handleEditReservation = (reservation: any) => {
+    toast.info(`Editare rezervare ${reservation.code} - Funcționalitate în dezvoltare`);
+  };
+
+  const handleDeleteReservation = (reservation: any) => {
+    toast.error(`Ștergere rezervare ${reservation.code} - Funcționalitate în dezvoltare`);
   };
 
   return (
@@ -151,13 +168,28 @@ export const AllReservationsPage: React.FC = () => {
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewReservation(reservation)}
+                            title="Vizualizează detalii"
+                          >
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleEditReservation(reservation)}
+                            title="Editează rezervarea"
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleDeleteReservation(reservation)}
+                            title="Șterge rezervarea"
+                          >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -176,6 +208,15 @@ export const AllReservationsPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      <ReservationDetailsModal
+        reservation={selectedReservation}
+        isOpen={showReservationDetails}
+        onClose={() => {
+          setShowReservationDetails(false);
+          setSelectedReservation(null);
+        }}
+      />
     </div>
   );
 };

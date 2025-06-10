@@ -9,8 +9,8 @@ const generateCode = (prefix: string, counter: number, date?: string): string =>
   return `${prefix}-${String(counter).padStart(3, '0')}`;
 };
 
-// Generate 40 clients
-export const mockClients: Client[] = Array.from({ length: 40 }, (_, i) => {
+// Generate 80 clients (40 existing + 40 new)
+export const mockClients: Client[] = Array.from({ length: 80 }, (_, i) => {
   const names = [
     'Ion Popescu', 'Maria Ionescu', 'Alexandru Gheorghe', 'Elena Radu', 'Mihai Stoica',
     'Ana Dumitru', 'George Popa', 'Cristina Manea', 'Adrian Constantinescu', 'Raluca Diaconu',
@@ -19,11 +19,19 @@ export const mockClients: Client[] = Array.from({ length: 40 }, (_, i) => {
     'Victor Neagu', 'Diana Tanase', 'Stefan Badea', 'Laura Preda', 'Marius Anghelescu',
     'Alina Cristea', 'Ciprian Lupu', 'Silvia Mocanu', 'Razvan Iancu', 'Oana Nistor',
     'Andrei Sandu', 'Corina Ciobanu', 'Lucian Stan', 'Bianca Zamfir', 'Vlad Enache',
-    'Simona Paun', 'Gabriel Serban', 'Claudia Dinu', 'Robert Vlaicu', 'Roxana Apostol'
+    'Simona Paun', 'Gabriel Serban', 'Claudia Dinu', 'Robert Vlaicu', 'Roxana Apostol',
+    'Cristian Ionescu', 'Mihaela Georgescu', 'Adrian Popescu', 'Livia Constantinescu', 'Bogdan Tudor',
+    'Alexandra Dumitru', 'Nicolae Popa', 'Anca Manea', 'Sebastian Radu', 'Diana Stoica',
+    'Marian Marinescu', 'Elena Stefanescu', 'Claudiu Moldovan', 'Irina Nicolaescu', 'Rares Tudor',
+    'Simona Vasilescu', 'Dragos Ene', 'Monica Barbu', 'Catalin Munteanu', 'Andreea Ungureanu',
+    'Pavel Neagu', 'Laura Tanase', 'Cristian Badea', 'Ana Preda', 'Florin Anghelescu',
+    'Maria Cristea', 'Razvan Lupu', 'Elena Mocanu', 'Adrian Iancu', 'Irina Nistor',
+    'Gabriel Sandu', 'Anca Ciobanu', 'Mihai Stan', 'Roxana Zamfir', 'Vlad Enache',
+    'Carmen Paun', 'Daniel Serban', 'Livia Dinu', 'Sebastian Vlaicu', 'Diana Apostol'
   ];
   
   const name = names[i] || `Client ${i + 1}`;
-  const email = `${name.toLowerCase().replace(/\s+/g, '.')}@email.com`;
+  const email = `${name.toLowerCase().replace(/\s+/g, '.')}.${i}@email.com`;
   
   return {
     id: `client_${i + 1}`,
@@ -31,7 +39,7 @@ export const mockClients: Client[] = Array.from({ length: 40 }, (_, i) => {
     name,
     email,
     phone: `072${String(Math.floor(Math.random() * 10000000)).padStart(7, '0')}`,
-    address: `Strada ${['Victoriei', 'Unirii', 'Libertății', 'Mihai Viteazu', 'Stefan cel Mare'][i % 5]} nr. ${i + 1}, București`,
+    address: `Strada ${['Victoriei', 'Unirii', 'Libertății', 'Mihai Viteazu', 'Stefan cel Mare', 'Calea Dorobanti', 'Bulevardul Magheru', 'Strada Amzei', 'Calea Victoriei', 'Bulevardul Aviatorilor'][i % 10]} nr. ${i + 1}, București`,
     licenseNumber: `B${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`,
     dateOfBirth: `198${Math.floor(Math.random() * 9)}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
     createdAt: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString()
@@ -65,7 +73,7 @@ export const mockVehicles: Vehicle[] = Array.from({ length: 30 }, (_, i) => {
     brand,
     model,
     year: 2018 + Math.floor(Math.random() * 6),
-    licensePlate: `B${String(Math.floor(Math.random() * 100)).padStart(2, '0')}ABC`,
+    licensePlate: `B${String(Math.floor(Math.random() * 100)).padStart(2, '0')}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
     color: colors[Math.floor(Math.random() * colors.length)],
     fuelType: ['Benzină', 'Diesel', 'Hibrid', 'Electric'][Math.floor(Math.random() * 4)],
     transmission: Math.random() > 0.3 ? 'Manuală' : 'Automată',
@@ -78,10 +86,21 @@ export const mockVehicles: Vehicle[] = Array.from({ length: 30 }, (_, i) => {
   };
 });
 
-// Generate 15 reservations
-export const mockReservations: Reservation[] = Array.from({ length: 15 }, (_, i) => {
-  const startDate = new Date(2024, 5 + Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1);
-  const endDate = new Date(startDate.getTime() + (1 + Math.floor(Math.random() * 10)) * 24 * 60 * 60 * 1000);
+// Generate 35 reservations (20 for August-September)
+export const mockReservations: Reservation[] = Array.from({ length: 35 }, (_, i) => {
+  let startDate, endDate;
+  
+  // First 20 reservations for August-September 2024
+  if (i < 20) {
+    const month = Math.random() > 0.5 ? 7 : 8; // August (7) or September (8)
+    startDate = new Date(2024, month, Math.floor(Math.random() * 20) + 1);
+    endDate = new Date(startDate.getTime() + (3 + Math.floor(Math.random() * 7)) * 24 * 60 * 60 * 1000);
+  } else {
+    // Remaining 15 reservations for other months
+    startDate = new Date(2024, 5 + Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1);
+    endDate = new Date(startDate.getTime() + (1 + Math.floor(Math.random() * 10)) * 24 * 60 * 60 * 1000);
+  }
+  
   const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
   const vehicle = mockVehicles[i % mockVehicles.length];
   const client = mockClients[i % mockClients.length];
@@ -115,7 +134,7 @@ export const mockPayments: Payment[] = mockReservations.map((reservation, i) => 
 }));
 
 // Generate feedback for some reservations
-export const mockFeedback: Feedback[] = mockReservations.slice(0, 10).map((reservation, i) => {
+export const mockFeedback: Feedback[] = mockReservations.slice(0, 15).map((reservation, i) => {
   const client = mockClients.find(c => c.id === reservation.clientId)!;
   
   return {
@@ -134,7 +153,12 @@ export const mockFeedback: Feedback[] = mockReservations.slice(0, 10).map((reser
       'Mașina a fost exact ce am căutat.',
       'Personal competent și helpful.',
       'Experiență fără probleme.',
-      'Voi reveni cu siguranță!'
+      'Voi reveni cu siguranță!',
+      'Foarte mulțumit de servicii.',
+      'Recomand cu încredere.',
+      'Experiență de neuitat!',
+      'Servicii de calitate superioară.',
+      'Îmi place să lucrez cu voi!'
     ][i],
     createdAt: new Date(new Date(reservation.endDate).getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
   };
