@@ -1,14 +1,29 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, CheckCircle, AlertCircle, Truck } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Search, CheckCircle, AlertCircle, Truck, FileText, ChevronDown } from 'lucide-react';
+import { VehicleConditionFormModal } from '@/components/documents/VehicleConditionFormModal';
+import { KeyReturnProofModal } from '@/components/documents/KeyReturnProofModal';
+import { HandoverReportModal } from '@/components/documents/HandoverReportModal';
 
 export const VehicleReturnsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [vehicleConditionModal, setVehicleConditionModal] = useState<{
+    isOpen: boolean;
+    data: any;
+  }>({ isOpen: false, data: null });
+  const [keyReturnModal, setKeyReturnModal] = useState<{
+    isOpen: boolean;
+    data: any;
+  }>({ isOpen: false, data: null });
+  const [handoverModal, setHandoverModal] = useState<{
+    isOpen: boolean;
+    data: any;
+  }>({ isOpen: false, data: null });
 
   // Mock data pentru returnări
   const mockReturns = [
@@ -54,6 +69,18 @@ export const VehicleReturnsPage: React.FC = () => {
         {labels[status as keyof typeof labels]}
       </Badge>
     );
+  };
+
+  const openVehicleConditionModal = (returnItem: any) => {
+    setVehicleConditionModal({ isOpen: true, data: returnItem });
+  };
+
+  const openKeyReturnModal = (returnItem: any) => {
+    setKeyReturnModal({ isOpen: true, data: returnItem });
+  };
+
+  const openHandoverModal = (returnItem: any) => {
+    setHandoverModal({ isOpen: true, data: returnItem });
   };
 
   return (
@@ -130,6 +157,7 @@ export const VehicleReturnsPage: React.FC = () => {
                   <TableHead>Client</TableHead>
                   <TableHead>Data Returnare</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Documente</TableHead>
                   <TableHead>Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
@@ -146,6 +174,31 @@ export const VehicleReturnsPage: React.FC = () => {
                     <TableCell>{returnItem.clientName}</TableCell>
                     <TableCell>{returnItem.returnDate}</TableCell>
                     <TableCell>{getStatusBadge(returnItem.status)}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <FileText className="w-4 h-4 mr-1" />
+                            Documente
+                            <ChevronDown className="w-4 h-4 ml-1" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-64">
+                          <DropdownMenuItem onClick={() => openVehicleConditionModal(returnItem)}>
+                            <FileText className="w-4 h-4 mr-2" />
+                            Fișa stare vehicul la returnare
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openKeyReturnModal(returnItem)}>
+                            <FileText className="w-4 h-4 mr-2" />
+                            Dovadă de restituire cheie/documente
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openHandoverModal(returnItem)}>
+                            <FileText className="w-4 h-4 mr-2" />
+                            Proces-verbal de predare-primire vehicul
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {returnItem.status === 'pending' ? (
@@ -168,6 +221,43 @@ export const VehicleReturnsPage: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      {vehicleConditionModal.data && (
+        <VehicleConditionFormModal
+          isOpen={vehicleConditionModal.isOpen}
+          onClose={() => setVehicleConditionModal({ isOpen: false, data: null })}
+          reservationCode={vehicleConditionModal.data.reservationCode}
+          vehicleBrand={vehicleConditionModal.data.vehicleBrand}
+          vehicleModel={vehicleConditionModal.data.vehicleModel}
+          licensePlate={vehicleConditionModal.data.licensePlate}
+          clientName={vehicleConditionModal.data.clientName}
+        />
+      )}
+
+      {keyReturnModal.data && (
+        <KeyReturnProofModal
+          isOpen={keyReturnModal.isOpen}
+          onClose={() => setKeyReturnModal({ isOpen: false, data: null })}
+          reservationCode={keyReturnModal.data.reservationCode}
+          vehicleBrand={keyReturnModal.data.vehicleBrand}
+          vehicleModel={keyReturnModal.data.vehicleModel}
+          licensePlate={keyReturnModal.data.licensePlate}
+          clientName={keyReturnModal.data.clientName}
+        />
+      )}
+
+      {handoverModal.data && (
+        <HandoverReportModal
+          isOpen={handoverModal.isOpen}
+          onClose={() => setHandoverModal({ isOpen: false, data: null })}
+          reservationCode={handoverModal.data.reservationCode}
+          vehicleBrand={handoverModal.data.vehicleBrand}
+          vehicleModel={handoverModal.data.vehicleModel}
+          licensePlate={handoverModal.data.licensePlate}
+          clientName={handoverModal.data.clientName}
+        />
+      )}
     </div>
   );
 };

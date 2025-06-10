@@ -21,7 +21,8 @@ import {
   History,
   Settings,
   Users,
-  BarChart3
+  BarChart3,
+  RotateCcw
 } from 'lucide-react';
 
 const menuItems = {
@@ -34,13 +35,14 @@ const menuItems = {
   operator: [
     { title: 'Administrare Flotă', url: '/fleet', icon: Car },
     { title: 'Toate Rezervările', url: '/all-reservations', icon: Calendar },
-    { title: 'Returnări', url: '/returns', icon: FileText },
+    { title: 'Returnări', url: '/returns', icon: RotateCcw },
     { title: 'Clienți', url: '/clients', icon: Users },
   ],
   admin: [
     { title: 'Dashboard', url: '/dashboard', icon: BarChart3 },
     { title: 'Toate Rezervările', url: '/all-reservations', icon: Calendar },
     { title: 'Administrare Flotă', url: '/fleet', icon: Car },
+    { title: 'Returnări', url: '/returns', icon: RotateCcw },
     { title: 'Plăți', url: '/payments', icon: CreditCard },
     { title: 'Clienți', url: '/clients', icon: Users },
     { title: 'Rapoarte', url: '/reports', icon: FileText },
