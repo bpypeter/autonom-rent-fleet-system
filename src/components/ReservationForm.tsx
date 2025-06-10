@@ -55,6 +55,16 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
     return `REZ${dateStr}-${timestamp}`;
   };
 
+  const getClientId = () => {
+    // For the "client" user, use "client" as clientId to match existing reservations
+    // This matches the pattern used in mock data
+    if (user?.username === 'client') {
+      return 'client';
+    }
+    // For other users, use their username
+    return user?.username || '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -77,10 +87,11 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
     setIsSubmitting(true);
 
     try {
+      const clientId = getClientId();
       const reservationData = {
         id: crypto.randomUUID(),
         code: generateReservationCode(),
-        clientId: user.username, // This should be "client" for the client user
+        clientId: clientId,
         vehicleId: selectedVehicle.id,
         startDate,
         endDate,
@@ -94,6 +105,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
       console.log('ReservationForm - Creating reservation with data:', {
         clientId: reservationData.clientId,
         username: user.username,
+        userRole: user.role,
         code: reservationData.code
       });
       

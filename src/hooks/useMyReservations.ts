@@ -23,6 +23,7 @@ export const useMyReservations = () => {
     }
 
     // For client users, show reservations where clientId matches their username
+    // The "client" user should see reservations with clientId: "client"
     const filtered = reservations.filter(reservation => {
       console.log('useMyReservations - Checking reservation:', {
         reservationId: reservation.id,
@@ -46,9 +47,9 @@ export const useMyReservations = () => {
       });
     } else {
       console.log('useMyReservations - No matching reservations found');
-      // Log all reservations to see what's available
-      console.log('useMyReservations - All available reservations:');
-      reservations.forEach(res => {
+      // Log the first few reservations to see what's available
+      console.log('useMyReservations - Sample available reservations:');
+      reservations.slice(0, 5).forEach(res => {
         console.log('  - Reservation:', res.code, 'clientId:', res.clientId, 'status:', res.status);
       });
     }
