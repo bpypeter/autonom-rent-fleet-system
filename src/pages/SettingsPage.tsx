@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,11 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { Settings, Shield, Bell, Database, Mail, Globe } from 'lucide-react';
+import { Settings, Shield, Bell, Database, Mail, Globe, FileText } from 'lucide-react';
 import { BackupManualModal } from '@/components/BackupManualModal';
 import { RestoreBackupModal } from '@/components/RestoreBackupModal';
 import { BackupHistoryModal } from '@/components/BackupHistoryModal';
+import { AuditLogModal } from '@/components/AuditLogModal';
 
 export const SettingsPage: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -21,6 +23,7 @@ export const SettingsPage: React.FC = () => {
   const [backupModalOpen, setBackupModalOpen] = useState(false);
   const [restoreModalOpen, setRestoreModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [auditLogModalOpen, setAuditLogModalOpen] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -163,6 +166,17 @@ export const SettingsPage: React.FC = () => {
                     <p className="text-sm text-muted-foreground">Înregistrează toate acțiunile utilizatorilor</p>
                   </div>
                   <Switch id="audit-logging" defaultChecked />
+                </div>
+                
+                <div className="flex gap-4 pt-4">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setAuditLogModalOpen(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Vizualizare Jurnal Audit
+                  </Button>
                 </div>
               </div>
 
@@ -434,6 +448,12 @@ export const SettingsPage: React.FC = () => {
       <BackupHistoryModal 
         open={historyModalOpen} 
         onOpenChange={setHistoryModalOpen} 
+      />
+      
+      {/* Audit Log Modal */}
+      <AuditLogModal 
+        open={auditLogModalOpen} 
+        onOpenChange={setAuditLogModalOpen} 
       />
     </div>
   );
