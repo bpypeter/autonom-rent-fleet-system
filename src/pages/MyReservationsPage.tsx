@@ -91,6 +91,9 @@ export const MyReservationsPage: React.FC = () => {
 
   const isOperatorOrClient = user?.role === 'operator' || user?.role === 'client';
 
+  console.log('MyReservationsPage - Current reservations:', filteredReservations);
+  console.log('MyReservationsPage - Current user:', user);
+
   return (
     <div className="space-y-3 sm:space-y-4 lg:space-y-6 p-2 sm:p-3 lg:p-6">
       <div className="space-y-1 sm:space-y-2">
@@ -164,6 +167,8 @@ export const MyReservationsPage: React.FC = () => {
               const client = mockClients.find(c => c.id === reservation.clientId);
               const vehicle = mockVehicles.find(v => v.id === reservation.vehicleId);
               
+              console.log('Mobile card - Reservation:', reservation.code, 'Client:', client?.name);
+              
               return (
                 <Card key={reservation.id} className="p-3 sm:p-4">
                   <div className="space-y-2 sm:space-y-3">
@@ -227,7 +232,7 @@ export const MyReservationsPage: React.FC = () => {
                       <DocumentsDropdown
                         reservationId={reservation.id}
                         reservationCode={reservation.code}
-                        clientName={client?.name || ''}
+                        clientName={client?.name || 'Client necunoscut'}
                       />
                     </div>
                   </div>
@@ -255,6 +260,8 @@ export const MyReservationsPage: React.FC = () => {
                 {filteredReservations.map(reservation => {
                   const client = mockClients.find(c => c.id === reservation.clientId);
                   const vehicle = mockVehicles.find(v => v.id === reservation.vehicleId);
+                  
+                  console.log('Desktop table - Reservation:', reservation.code, 'Client:', client?.name);
                   
                   return (
                     <TableRow key={reservation.id}>
@@ -285,7 +292,7 @@ export const MyReservationsPage: React.FC = () => {
                         <DocumentsDropdown
                           reservationId={reservation.id}
                           reservationCode={reservation.code}
-                          clientName={client?.name || ''}
+                          clientName={client?.name || 'Client necunoscut'}
                         />
                       </TableCell>
                       <TableCell>
