@@ -71,18 +71,27 @@ export const ReservationProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [reservations, setReservations] = useState<Reservation[]>(convertedMockReservations);
 
   const addReservation = (reservation: Reservation) => {
-    setReservations(prev => [...prev, reservation]);
+    console.log('ReservationContext - Adding reservation:', reservation);
+    setReservations(prev => {
+      const newReservations = [...prev, reservation];
+      console.log('ReservationContext - Updated reservations:', newReservations);
+      return newReservations;
+    });
   };
 
   const updateReservation = (id: string, updates: Partial<Reservation>) => {
+    console.log('ReservationContext - Updating reservation:', id, updates);
     setReservations(prev => prev.map(res => 
       res.id === id ? { ...res, ...updates } : res
     ));
   };
 
   const deleteReservation = (id: string) => {
+    console.log('ReservationContext - Deleting reservation:', id);
     setReservations(prev => prev.filter(res => res.id !== id));
   };
+
+  console.log('ReservationContext - Current reservations in context:', reservations);
 
   return (
     <ReservationContext.Provider value={{

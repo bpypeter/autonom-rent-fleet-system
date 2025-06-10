@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useReservations } from '@/contexts/ReservationContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -99,6 +98,10 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
       status: 'pending',
       createdAt: new Date().toISOString()
     };
+
+    console.log('ReservationForm - Creating reservation with data:', newReservation);
+    console.log('ReservationForm - Current user:', user);
+    console.log('ReservationForm - User ID being used:', user.id);
 
     addReservation(newReservation);
     

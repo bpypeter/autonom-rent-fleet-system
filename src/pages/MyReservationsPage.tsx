@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -23,10 +22,33 @@ export const MyReservationsPage: React.FC = () => {
   const [showReservationDetails, setShowReservationDetails] = useState(false);
   const [showProformaInvoice, setShowProformaInvoice] = useState(false);
 
+  // Debug logging
+  console.log('MyReservationsPage - DEBUG START');
+  console.log('MyReservationsPage - Current user:', user);
+  console.log('MyReservationsPage - User ID:', user?.id);
+  console.log('MyReservationsPage - User role:', user?.role);
+  console.log('MyReservationsPage - All reservations from context:', reservations);
+  
+  // Check each reservation individually
+  reservations.forEach((reservation, index) => {
+    console.log(`MyReservationsPage - Reservation ${index}:`, {
+      id: reservation.id,
+      clientId: reservation.clientId,
+      code: reservation.code,
+      matchesUser: reservation.clientId === user?.id
+    });
+  });
+
   // Filter reservations based on user role - Fixed logic
   const userReservations = user?.role === 'admin' 
     ? reservations 
-    : reservations.filter(reservation => reservation.clientId === user?.id);
+    : reservations.filter(reservation => {
+        console.log(`MyReservationsPage - Filtering reservation ${reservation.code}: clientId=${reservation.clientId}, userId=${user?.id}, matches=${reservation.clientId === user?.id}`);
+        return reservation.clientId === user?.id;
+      });
+
+  console.log('MyReservationsPage - User reservations after filtering:', userReservations);
+  console.log('MyReservationsPage - DEBUG END');
 
   const filteredReservations = useReservationFiltering(userReservations, searchTerm, statusFilter);
 
@@ -177,3 +199,5 @@ export const MyReservationsPage: React.FC = () => {
     </div>
   );
 };
+
+export default MyReservationsPage;
