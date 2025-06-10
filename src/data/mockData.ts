@@ -85,29 +85,29 @@ export const mockVehicles: Vehicle[] = Array.from({ length: 30 }, (_, i) => {
   };
 });
 
-// Generate 49 reservations (20 for August-September + 7 for June + 7 for July + 15 others)
+// Generate 49 reservations (20 for August-September + 7 for June + 7 for July + 15 others) - all moved to 2025
 export const mockReservations: Reservation[] = Array.from({ length: 49 }, (_, i) => {
   let startDate, endDate;
   
-  // First 20 reservations for August-September 2024
+  // First 20 reservations for August-September 2025 (moved from 2024)
   if (i < 20) {
     const month = Math.random() > 0.5 ? 7 : 8; // August (7) or September (8)
-    startDate = new Date(2024, month, Math.floor(Math.random() * 20) + 1);
+    startDate = new Date(2025, month, Math.floor(Math.random() * 20) + 1);
     endDate = new Date(startDate.getTime() + (3 + Math.floor(Math.random() * 7)) * 24 * 60 * 60 * 1000);
   }
-  // Next 7 reservations for June 2024
+  // Next 7 reservations for June 2025 (moved from 2024)
   else if (i < 27) {
-    startDate = new Date(2024, 5, Math.floor(Math.random() * 28) + 1); // June (5)
+    startDate = new Date(2025, 5, Math.floor(Math.random() * 28) + 1); // June (5)
     endDate = new Date(startDate.getTime() + (2 + Math.floor(Math.random() * 8)) * 24 * 60 * 60 * 1000);
   }
-  // Next 7 reservations for July 2024
+  // Next 7 reservations for July 2025 (moved from 2024)
   else if (i < 34) {
-    startDate = new Date(2024, 6, Math.floor(Math.random() * 28) + 1); // July (6)
+    startDate = new Date(2025, 6, Math.floor(Math.random() * 28) + 1); // July (6)
     endDate = new Date(startDate.getTime() + (2 + Math.floor(Math.random() * 8)) * 24 * 60 * 60 * 1000);
   }
-  // Remaining 15 reservations for other months
+  // Remaining 15 reservations for other months in 2025
   else {
-    startDate = new Date(2024, 5 + Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1);
+    startDate = new Date(2025, 5 + Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1);
     endDate = new Date(startDate.getTime() + (1 + Math.floor(Math.random() * 10)) * 24 * 60 * 60 * 1000);
   }
   
@@ -189,3 +189,5 @@ export const mockReturns: VehicleReturn[] = mockReservations
     reportCode: Math.random() > 0.8 ? generateCode('DAU', i + 1) : undefined,
     createdAt: new Date(new Date(reservation.endDate).getTime() + Math.random() * 24 * 60 * 60 * 1000).toISOString()
   }));
+
+}

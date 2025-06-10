@@ -63,7 +63,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
       endDate,
       totalDays,
       totalAmount,
-      status: 'confirmed',
+      status: 'pending', // Changed from 'confirmed' to 'pending'
       createdAt: new Date().toISOString()
     };
 
@@ -71,7 +71,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
     addReservation(reservationData);
 
     console.log('Reservation created:', reservationData);
-    toast.success(`Rezervarea ${reservationCode} a fost creată cu succes!`);
+    toast.success(`Rezervarea ${reservationCode} a fost trimisă spre aprobare!`);
     
     // Reset form
     setStartDate('');
@@ -111,14 +111,14 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
             <h3 className="font-medium mb-2">Vehicul Selectat</h3>
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-medium">{selectedVehicle.brand} {selectedVehicle.model}</p>
+                <p className="font-medium">{selectedVehicle?.brand} {selectedVehicle?.model}</p>
                 <p className="text-sm text-muted-foreground">
-                  {selectedVehicle.year} • {selectedVehicle.color} • {selectedVehicle.licensePlate}
+                  {selectedVehicle?.year} • {selectedVehicle?.color} • {selectedVehicle?.licensePlate}
                 </p>
-                <p className="text-sm text-muted-foreground">Cod: {selectedVehicle.code}</p>
+                <p className="text-sm text-muted-foreground">Cod: {selectedVehicle?.code}</p>
               </div>
               <div className="text-right">
-                <p className="font-medium">{selectedVehicle.dailyRate} RON/zi</p>
+                <p className="font-medium">{selectedVehicle?.dailyRate} RON/zi</p>
               </div>
             </div>
           </div>
@@ -162,7 +162,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                   </div>
                   <div>
                     <p className="text-muted-foreground">Tarif zilnic</p>
-                    <p className="font-medium">{selectedVehicle.dailyRate} RON</p>
+                    <p className="font-medium">{selectedVehicle?.dailyRate} RON</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Total estimativ</p>
@@ -175,7 +175,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
 
           <Button type="submit" className="w-full" disabled={totalDays <= 0}>
             <CreditCard className="w-4 h-4 mr-2" />
-            Creează Rezervarea
+            Trimite Cererea de Rezervare
           </Button>
         </form>
       </CardContent>
