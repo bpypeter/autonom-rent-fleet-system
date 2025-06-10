@@ -65,10 +65,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    console.log('Logout called - clearing all auth state');
     setUser(null);
     localStorage.removeItem('autonom_user');
-    // Clear all auth state and redirect immediately
-    window.location.replace('/login');
+    localStorage.clear();
+    // Force immediate redirect
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 0);
   };
 
   return (
