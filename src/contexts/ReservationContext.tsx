@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { mockReservations } from '@/data/mockData';
 
 interface Reservation {
@@ -70,8 +70,48 @@ const convertedMockReservations: Reservation[] = mockReservations.map(reservatio
   return baseReservation;
 });
 
+// Function to load reservations from localStorage or use mock data
+const loadReservations = (): Reservation[] => {
+  try {
+    const saved = localStorage.getItem('autonom_reservations');
+    if (saved) {
+      const parsedReservations = JSON.parse(saved);
+      console.log('ReservationContext - Loaded reservations from localStorage:', parsedReservations.length);
+      return parsedReservations;
+    }
+  } catch (error) {
+    console.error('ReservationContext - Error loading from localStorage:', error);
+  }
+  
+  console.log('ReservationContext - Using mock data:', convertedMockReservations.length);
+  return convertedMockReservations;
+};
+
+// Function to save reservations to localStorage
+const saveReservations = (reservations: Reservation[]) => {
+  try {
+    localStorage.setItem('autonom_reservations', JSON.stringify(reservations));
+    console.log('ReservationContext - Saved reservations to localStorage:', reservations.length);
+  } catch (error) {
+    console.error('ReservationContext - Error saving to localStorage:', error);
+  }
+};
+
 export const ReservationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [reservations, setReservations] = useState<Reservation[]>(convertedMockReservations);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  // Load reservations on mount
+  useEffect(() => {
+    const loadedReservations = loadReservations();
+    setReservations(loadedReservations);
+  }, []);
+
+  // Save to localStorage whenever reservations change
+  useEffect(() => {
+    if (reservations.length > 0) {
+      saveReservations(reservations);
+    }
+  }, [reservations]);
 
   const addReservation = (reservation: Reservation) => {
     console.log('ReservationContext - Adding reservation:', {
