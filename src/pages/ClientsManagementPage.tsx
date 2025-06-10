@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ClientDetailsModal } from '@/components/ClientDetailsModal';
 import { AddClientForm } from '@/components/AddClientForm';
+import { EditClientForm } from '@/components/EditClientForm';
 import { useClients } from '@/contexts/ClientContext';
 import { useReservations } from '@/contexts/ReservationContext';
 import { Search, Filter, Eye, Edit, Trash2, Plus, Users } from 'lucide-react';
@@ -21,6 +21,8 @@ export const ClientsManagementPage: React.FC = () => {
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [showClientDetails, setShowClientDetails] = useState(false);
   const [showAddClient, setShowAddClient] = useState(false);
+  const [showEditClient, setShowEditClient] = useState(false);
+  const [editingClient, setEditingClient] = useState<any>(null);
 
   // Function to get client status based on reservations
   const getClientStatus = (clientId: string) => {
@@ -80,12 +82,18 @@ export const ClientsManagementPage: React.FC = () => {
   };
 
   const handleEditClient = (client: any) => {
-    toast.info(`Editare client ${client.numeComplet} - Funcționalitate în dezvoltare`);
+    setEditingClient(client);
+    setShowEditClient(true);
   };
 
   const handleDeleteClient = (client: any) => {
     deleteClient(client.id);
     toast.error(`Clientul ${client.numeComplet} a fost șters`);
+  };
+
+  const handleClientUpdated = () => {
+    setEditingClient(null);
+    setShowEditClient(false);
   };
 
   return (
@@ -276,6 +284,16 @@ export const ClientsManagementPage: React.FC = () => {
           onClientAdded={() => setShowAddClient(false)}
         />
       )}
+
+      <EditClientForm
+        client={editingClient}
+        isOpen={showEditClient}
+        onClose={() => {
+          setShowEditClient(false);
+          setEditingClient(null);
+        }}
+        onClientUpdated={handleClientUpdated}
+      />
     </div>
   );
 };
