@@ -25,9 +25,18 @@ export const useMyReservations = () => {
     // For client users, filter by clientId matching username OR containing username pattern
     const filtered = reservations.filter(reservation => {
       console.log('useMyReservations - Checking reservation clientId:', reservation.clientId, 'against user:', user.username);
-      // Match exact username OR username pattern (for existing mock data)
-      return reservation.clientId === user.username || 
-             (user.username === 'client' && reservation.clientId.startsWith('client_'));
+      
+      // For the specific 'client' user, match pattern client_X
+      if (user.username === 'client') {
+        const matches = reservation.clientId === 'client' || reservation.clientId.startsWith('client_');
+        console.log('useMyReservations - Client user match result:', matches, 'for clientId:', reservation.clientId);
+        return matches;
+      }
+      
+      // For other users, exact match only
+      const matches = reservation.clientId === user.username;
+      console.log('useMyReservations - Exact match result:', matches, 'for clientId:', reservation.clientId);
+      return matches;
     });
 
     console.log(`useMyReservations - Filtered ${filtered.length} reservations for user ${user.username} (${user.role})`);

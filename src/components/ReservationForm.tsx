@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -179,32 +178,32 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
         </CardHeader>
         <CardContent>
           {currentStep === 'details' ? (
-            <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="startDate">Data început</Label>
                   <Input
                     id="startDate"
-                    name="start-date"
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    autoComplete="off"
                     required
+                    autoComplete="new-password"
+                    data-form-type="other"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="endDate">Data sfârșit</Label>
                   <Input
                     id="endDate"
-                    name="end-date"
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     min={startDate || new Date().toISOString().split('T')[0]}
-                    autoComplete="off"
                     required
+                    autoComplete="new-password"
+                    data-form-type="other"
                   />
                 </div>
               </div>
@@ -213,12 +212,12 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                 <Label htmlFor="observations">Observații (opțional)</Label>
                 <Textarea
                   id="observations"
-                  name="observations"
                   value={observations}
                   onChange={(e) => setObservations(e.target.value)}
                   placeholder="Observații sau cerințe speciale..."
-                  autoComplete="off"
                   rows={3}
+                  autoComplete="new-password"
+                  data-form-type="other"
                 />
               </div>
 
