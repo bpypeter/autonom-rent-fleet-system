@@ -74,11 +74,18 @@ export const ReservationProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [reservations, setReservations] = useState<Reservation[]>(convertedMockReservations);
 
   const addReservation = (reservation: Reservation) => {
-    console.log('ReservationContext - Adding reservation:', reservation);
+    console.log('ReservationContext - Adding reservation:', {
+      id: reservation.id,
+      code: reservation.code,
+      clientId: reservation.clientId,
+      status: reservation.status
+    });
+    
     setReservations(prev => {
       const newReservations = [...prev, reservation];
       console.log('ReservationContext - Updated reservations count:', newReservations.length);
-      console.log('ReservationContext - New reservation clientId:', reservation.clientId);
+      console.log('ReservationContext - New reservation added with clientId:', reservation.clientId);
+      console.log('ReservationContext - All current reservations:', newReservations.map(r => ({ code: r.code, clientId: r.clientId })));
       return newReservations;
     });
   };
@@ -96,9 +103,13 @@ export const ReservationProvider: React.FC<{ children: ReactNode }> = ({ childre
   };
 
   const refreshReservations = () => {
-    console.log('ReservationContext - Refreshing reservations');
+    console.log('ReservationContext - Refreshing reservations (forcing re-render)');
     // Force a re-render by creating a new array reference
-    setReservations(prev => [...prev]);
+    setReservations(prev => {
+      const refreshed = [...prev];
+      console.log('ReservationContext - After refresh, total reservations:', refreshed.length);
+      return refreshed;
+    });
   };
 
   console.log('ReservationContext - Current reservations:', reservations.length);

@@ -15,6 +15,7 @@ export const useMyReservations = () => {
     
     console.log('useMyReservations - Current user:', user.username, 'role:', user.role);
     console.log('useMyReservations - Total reservations in context:', reservations.length);
+    console.log('useMyReservations - All reservations:', reservations.map(r => ({ id: r.id, code: r.code, clientId: r.clientId })));
     
     // For admin users, show all reservations
     if (user.role === 'admin') {
@@ -49,8 +50,10 @@ export const useMyReservations = () => {
       });
     } else {
       console.log('useMyReservations - No matching reservations found');
-      console.log('useMyReservations - Sample available reservations:');
-      reservations.slice(0, 3).forEach(res => {
+      console.log('useMyReservations - Available reservations with clientId "client":');
+      const clientReservations = reservations.filter(r => r.clientId === 'client');
+      console.log('  - Found', clientReservations.length, 'reservations with clientId "client"');
+      clientReservations.forEach(res => {
         console.log('  - Reservation:', res.code, 'clientId:', res.clientId, 'status:', res.status);
       });
     }

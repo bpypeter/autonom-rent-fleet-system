@@ -18,13 +18,19 @@ export const VehiclesPage: React.FC = () => {
 
   const handleReservationComplete = (reservationData: any) => {
     console.log('VehiclesPage - Reservation created:', reservationData);
+    console.log('VehiclesPage - Created reservation details:', {
+      id: reservationData.id,
+      code: reservationData.code,
+      clientId: reservationData.clientId,
+      userId: user?.username
+    });
+    
     toast.success(`Rezervarea ${reservationData.code} a fost creată cu succes!`);
     setSelectedVehicle(null);
     
-    // Force refresh of reservations context
-    setTimeout(() => {
-      refreshReservations();
-    }, 100);
+    // Force immediate refresh of reservations context
+    console.log('VehiclesPage - Triggering reservations refresh');
+    refreshReservations();
   };
 
   const isClient = user?.role === 'client';
