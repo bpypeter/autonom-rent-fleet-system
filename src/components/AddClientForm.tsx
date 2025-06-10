@@ -10,9 +10,10 @@ import { toast } from 'sonner';
 
 interface AddClientFormProps {
   onClientAdded: () => void;
+  onClose: () => void;
 }
 
-export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded }) => {
+export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded, onClose }) => {
   const { addClient } = useClients();
   const [formData, setFormData] = useState({
     numeComplet: '',
@@ -164,10 +165,15 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onClientAdded }) =
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            <UserPlus className="w-4 h-4 mr-2" />
-            Adaugă Client
-          </Button>
+          <div className="flex gap-2">
+            <Button type="submit" className="flex-1">
+              <UserPlus className="w-4 h-4 mr-2" />
+              Adaugă Client
+            </Button>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Anulează
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

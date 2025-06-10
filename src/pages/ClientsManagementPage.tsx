@@ -45,9 +45,9 @@ export const ClientsManagementPage: React.FC = () => {
     const clientStatus = getClientStatus(client.id);
     
     const matchesSearch = 
-      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.numeComplet.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.phone.toLowerCase().includes(searchTerm.toLowerCase());
+      client.telefon.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || clientStatus === statusFilter;
     
@@ -80,12 +80,12 @@ export const ClientsManagementPage: React.FC = () => {
   };
 
   const handleEditClient = (client: any) => {
-    toast.info(`Editare client ${client.name} - Funcționalitate în dezvoltare`);
+    toast.info(`Editare client ${client.numeComplet} - Funcționalitate în dezvoltare`);
   };
 
   const handleDeleteClient = (client: any) => {
     deleteClient(client.id);
-    toast.error(`Clientul ${client.name} a fost șters`);
+    toast.error(`Clientul ${client.numeComplet} a fost șters`);
   };
 
   return (
@@ -156,9 +156,9 @@ export const ClientsManagementPage: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="font-medium">{client.name}</div>
+                      <div className="font-medium">{client.numeComplet}</div>
                       <div className="text-sm text-muted-foreground">{client.email}</div>
-                      <div className="text-sm text-muted-foreground">{client.phone}</div>
+                      <div className="text-sm text-muted-foreground">{client.telefon}</div>
                     </div>
                     {getStatusBadge(client.id)}
                   </div>
@@ -212,10 +212,10 @@ export const ClientsManagementPage: React.FC = () => {
               <TableBody>
                 {filteredClients.map(client => (
                   <TableRow key={client.id}>
-                    <TableCell className="font-medium">{client.name}</TableCell>
+                    <TableCell className="font-medium">{client.numeComplet}</TableCell>
                     <TableCell>{client.email}</TableCell>
-                    <TableCell>{client.phone}</TableCell>
-                    <TableCell>{client.registrationDate}</TableCell>
+                    <TableCell>{client.telefon}</TableCell>
+                    <TableCell>{client.dataInregistrare}</TableCell>
                     <TableCell>{getStatusBadge(client.id)}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -271,7 +271,10 @@ export const ClientsManagementPage: React.FC = () => {
       />
 
       {showAddClient && (
-        <AddClientForm onClose={() => setShowAddClient(false)} />
+        <AddClientForm 
+          onClose={() => setShowAddClient(false)}
+          onClientAdded={() => setShowAddClient(false)}
+        />
       )}
     </div>
   );
