@@ -23,12 +23,10 @@ export const MyReservationsPage: React.FC = () => {
   const [showReservationDetails, setShowReservationDetails] = useState(false);
   const [showProformaInvoice, setShowProformaInvoice] = useState(false);
 
-  // Filter reservations based on user role
+  // Filter reservations based on user role - Fixed logic
   const userReservations = user?.role === 'admin' 
     ? reservations 
-    : user?.role === 'operator' 
-      ? reservations.filter(reservation => reservation.clientId === user?.id)
-      : reservations.filter(reservation => reservation.clientId === user?.id);
+    : reservations.filter(reservation => reservation.clientId === user?.id);
 
   const filteredReservations = useReservationFiltering(userReservations, searchTerm, statusFilter);
 
@@ -50,6 +48,8 @@ export const MyReservationsPage: React.FC = () => {
 
   console.log('MyReservationsPage - Current reservations:', filteredReservations);
   console.log('MyReservationsPage - Current user:', user);
+  console.log('MyReservationsPage - All reservations from context:', reservations);
+  console.log('MyReservationsPage - User reservations after filtering:', userReservations);
 
   return (
     <div className="space-y-3 sm:space-y-4 lg:space-y-6 p-2 sm:p-3 lg:p-6">
