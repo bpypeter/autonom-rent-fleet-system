@@ -33,6 +33,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
   const [showCardModal, setShowCardModal] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
   const [showCashModal, setShowCashModal] = useState(false);
+  const [reservationCode, setReservationCode] = useState('');
   
   if (!selectedVehicle) {
     return <VehicleSelectionCard />;
@@ -58,6 +59,8 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
 
   const handlePaymentMethodSelect = (method: string) => {
     setPaymentMethod(method);
+    const newReservationCode = generateReservationCode();
+    setReservationCode(newReservationCode);
     
     if (method === 'card') {
       setShowCardModal(true);
@@ -86,7 +89,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
 
     const newReservation = {
       id: `reservation_${Date.now()}`,
-      code: generateReservationCode(),
+      code: reservationCode,
       clientId: user.id,
       vehicleId: selectedVehicle.id,
       startDate,
@@ -155,6 +158,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
         showBankModal={showBankModal}
         showCashModal={showCashModal}
         amount={calculateTotal()}
+        reservationCode={reservationCode}
         onCloseCardModal={() => setShowCardModal(false)}
         onCloseBankModal={() => setShowBankModal(false)}
         onCloseCashModal={() => setShowCashModal(false)}
