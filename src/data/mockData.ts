@@ -189,5 +189,3 @@ export const mockReturns: VehicleReturn[] = mockReservations
     reportCode: Math.random() > 0.8 ? generateCode('DAU', i + 1) : undefined,
     createdAt: new Date(new Date(reservation.endDate).getTime() + Math.random() * 24 * 60 * 60 * 1000).toISOString()
   }));
-
-}
