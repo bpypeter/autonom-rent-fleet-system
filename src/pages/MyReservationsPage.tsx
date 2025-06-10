@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,10 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
+import { ProformaInvoiceModal } from '@/components/ProformaInvoiceModal';
 import { useReservations } from '@/contexts/ReservationContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockClients, mockVehicles } from '@/data/mockData';
-import { Search, Filter, Eye, Edit, Trash2, Calendar, MapPin, Clock, Car, DollarSign } from 'lucide-react';
+import { Search, Filter, Eye, Edit, Trash2, Calendar, MapPin, Clock, Car, DollarSign, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const MyReservationsPage: React.FC = () => {
@@ -19,6 +21,7 @@ export const MyReservationsPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedReservation, setSelectedReservation] = useState<any>(null);
   const [showReservationDetails, setShowReservationDetails] = useState(false);
+  const [showProformaInvoice, setShowProformaInvoice] = useState(false);
 
   // Filter reservations based on user role - for operators, only show their reservations
   const userReservations = user?.role === 'admin' 
@@ -69,6 +72,11 @@ export const MyReservationsPage: React.FC = () => {
   const handleViewReservation = (reservation: any) => {
     setSelectedReservation(reservation);
     setShowReservationDetails(true);
+  };
+
+  const handleViewProforma = (reservation: any) => {
+    setSelectedReservation(reservation);
+    setShowProformaInvoice(true);
   };
 
   const handleEditReservation = (reservation: any) => {
@@ -181,7 +189,7 @@ export const MyReservationsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-2 border-t">
+                    <div className="flex flex-wrap gap-2 pt-2 border-t">
                       <Button 
                         size="sm" 
                         variant="outline"
@@ -190,6 +198,15 @@ export const MyReservationsPage: React.FC = () => {
                       >
                         <Eye className="w-3 h-3 mr-1" />
                         Vezi
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleViewProforma(reservation)}
+                        className="flex-1 text-xs h-7 sm:h-8"
+                      >
+                        <FileText className="w-3 h-3 mr-1" />
+                        Factură
                       </Button>
                       {isOperatorOrClient && reservation.status === 'pending' && (
                         <Button 
@@ -264,6 +281,15 @@ export const MyReservationsPage: React.FC = () => {
                           >
                             <Eye className="w-3 h-3" />
                           </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewProforma(reservation)}
+                            title="Vizualizează factura proforma"
+                            className="text-xs h-6 w-6 p-0"
+                          >
+                            <FileText className="w-3 h-3" />
+                          </Button>
                           {isOperatorOrClient && reservation.status === 'pending' && (
                             <Button 
                               size="sm" 
@@ -299,6 +325,15 @@ export const MyReservationsPage: React.FC = () => {
         isOpen={showReservationDetails}
         onClose={() => {
           setShowReservationDetails(false);
+          setSelectedReservation(null);
+        }}
+      />
+
+      <ProformaInvoiceModal
+        reservation={selectedReservation}
+        isOpen={showProformaInvoice}
+        onClose={() => {
+          setShowProformaInvoice(false);
           setSelectedReservation(null);
         }}
       />
