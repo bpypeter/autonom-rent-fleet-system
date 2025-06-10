@@ -7,17 +7,19 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
-import { mockReservations, mockClients, mockVehicles } from '@/data/mockData';
-import { Search, Filter, Eye, Edit, Trash2 } from 'lucide-react';
+import { useReservations } from '@/contexts/ReservationContext';
+import { mockClients, mockVehicles } from '@/data/mockData';
+import { Search, Filter, Eye, Edit, Trash2, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AllReservationsPage: React.FC = () => {
+  const { reservations, updateReservation } = useReservations();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedReservation, setSelectedReservation] = useState<any>(null);
   const [showReservationDetails, setShowReservationDetails] = useState(false);
 
-  const filteredReservations = mockReservations.filter(reservation => {
+  const filteredReservations = reservations.filter(reservation => {
     const client = mockClients.find(c => c.id === reservation.clientId);
     const vehicle = mockVehicles.find(v => v.id === reservation.vehicleId);
     
@@ -59,6 +61,16 @@ export const AllReservationsPage: React.FC = () => {
   const handleViewReservation = (reservation: any) => {
     setSelectedReservation(reservation);
     setShowReservationDetails(true);
+  };
+
+  const handleConfirmReservation = (reservation: any) => {
+    updateReservation(reservation.id, { status: 'confirmed' });
+    toast.success(`Rezervarea ${reservation.code} a fost confirmată`);
+  };
+
+  const handleRejectReservation = (reservation: any) => {
+    updateReservation(reservation.id, { status: 'cancelled' });
+    toast.error(`Rezervarea ${reservation.code} a fost anulată`);
   };
 
   const handleEditReservation = (reservation: any) => {
@@ -168,6 +180,28 @@ export const AllReservationsPage: React.FC = () => {
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
+                          {reservation.status === 'pending' && (
+                            <>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleConfirmReservation(reservation)}
+                                title="Confirmă rezervarea"
+                                className="text-green-600 hover:text-green-700"
+                              >
+                                <Check className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleRejectReservation(reservation)}
+                                title="Anulează rezervarea"
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
                           <Button 
                             size="sm" 
                             variant="outline"

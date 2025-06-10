@@ -1,258 +1,232 @@
 
 import React, { useState } from 'react';
-import { Vehicle } from '@/types';
+import { useReservations } from '@/contexts/ReservationContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { CalendarDays, Car, CreditCard, Banknote, ArrowRightLeft } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useReservations } from '@/contexts/ReservationContext';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CardPaymentModal } from '@/components/CardPaymentModal';
+import { BankTransferModal } from '@/components/BankTransferModal';
+import { Calendar, CreditCard, Banknote, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { CardPaymentModal } from './CardPaymentModal';
-import { BankTransferModal } from './BankTransferModal';
 
-interface ReservationFormProps {
-  selectedVehicle: Vehicle | null;
-  onReservationComplete: (reservationData: any) => void;
+interface Vehicle {
+  id: string;
+  brand: string;
+  model: string;
+  dailyRate: number;
+  licensePlate: string;
 }
 
-export const ReservationForm: React.FC<ReservationFormProps> = ({
-  selectedVehicle,
-  onReservationComplete
-}) => {
-  const { user } = useAuth();
+interface ReservationFormProps {
+  vehicle: Vehicle;
+  onClose: () => void;
+}
+
+export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClose }) => {
   const { addReservation } = useReservations();
+  const { user } = useAuth();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [showCardModal, setShowCardModal] = useState(false);
-  const [showBankTransferModal, setShowBankTransferModal] = useState(false);
-
+  const [showBankModal, setShowBankModal] = useState(false);
+  
   const calculateDays = () => {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    if (end <= start) return 0;
-    
     const diffTime = Math.abs(end.getTime() - start.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  const totalDays = calculateDays();
-  const totalAmount = selectedVehicle ? totalDays * selectedVehicle.dailyRate : 0;
+  const calculateTotal = () => {
+    return calculateDays() * vehicle.dailyRate;
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Generate reservation code
+  const generateReservationCode = () => {
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `REZ${date}-${randomNum}`;
+  };
+
+  const handlePaymentMethodSelect = (method: string) => {
+    setPaymentMethod(method);
     
-    if (!selectedVehicle || !startDate || !endDate) {
+    if (method === 'card') {
+      setShowCardModal(true);
+    } else if (method === 'transfer') {
+      setShowBankModal(true);
+    } else if (method === 'cash') {
+      handleCompleteReservation();
+    }
+  };
+
+  const handleCompleteReservation = () => {
+    if (!user) {
+      toast.error('Trebuie să fiți autentificat pentru a face o rezervare');
+      return;
+    }
+
+    if (!startDate || !endDate || !paymentMethod) {
       toast.error('Vă rugăm să completați toate câmpurile');
       return;
     }
 
-    if (totalDays <= 0) {
+    if (new Date(startDate) >= new Date(endDate)) {
       toast.error('Data de sfârșit trebuie să fie după data de început');
       return;
     }
 
-    if (paymentMethod === 'card') {
-      setShowCardModal(true);
-      return;
-    }
-
-    if (paymentMethod === 'transfer') {
-      setShowBankTransferModal(true);
-      return;
-    }
-
-    // Pentru plata cash, procesează direct rezervarea
-    processReservation();
-  };
-
-  const processReservation = () => {
-    const reservationCode = `REZ${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-    
-    const reservationData = {
+    // Create new reservation
+    const newReservation = {
       id: `reservation_${Date.now()}`,
-      code: reservationCode,
-      vehicleId: selectedVehicle!.id,
-      clientId: user?.id || '1',
+      code: generateReservationCode(),
+      clientId: user.id,
+      vehicleId: vehicle.id,
       startDate,
       endDate,
-      totalDays,
-      totalAmount,
+      totalDays: calculateDays(),
+      totalAmount: calculateTotal(),
       status: 'pending',
       createdAt: new Date().toISOString()
     };
 
-    addReservation(reservationData);
-
-    console.log('Reservation created:', reservationData);
-    toast.success(`Rezervarea ${reservationCode} a fost trimisă spre aprobare!`);
+    addReservation(newReservation);
     
-    // Reset form
-    setStartDate('');
-    setEndDate('');
-    setPaymentMethod('cash');
-    
-    onReservationComplete(reservationData);
+    toast.success(`Rezervarea ${newReservation.code} a fost creată cu succes și este în așteptarea confirmării!`);
+    onClose();
   };
 
-  const handlePaymentComplete = () => {
+  const handleCardPaymentComplete = () => {
     setShowCardModal(false);
-    setShowBankTransferModal(false);
-    processReservation();
+    handleCompleteReservation();
   };
 
-  if (!selectedVehicle) {
-    return (
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center py-8">
-            <Car className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">Selectați un vehicul pentru a continua cu rezervarea.</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const handleBankTransferComplete = () => {
+    setShowBankModal(false);
+    handleCompleteReservation();
+  };
 
   return (
     <>
-      <Card>
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="w-5 h-5" />
-            Rezervare Nouă
+            <Calendar className="w-5 h-5" />
+            Rezervare Vehicul
           </CardTitle>
           <CardDescription>
-            Completați datele pentru rezervarea vehiculului selectat
+            {vehicle.brand} {vehicle.model} - {vehicle.licensePlate}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Selected Vehicle Info */}
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startDate">Data început</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="endDate">Data sfârșit</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                min={startDate || new Date().toISOString().split('T')[0]}
+              />
+            </div>
+          </div>
+
+          {startDate && endDate && (
             <div className="p-4 bg-muted rounded-lg">
-              <h3 className="font-medium mb-2">Vehicul Selectat</h3>
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-medium">{selectedVehicle?.brand} {selectedVehicle?.model}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedVehicle?.year} • {selectedVehicle?.color} • {selectedVehicle?.licensePlate}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Cod: {selectedVehicle?.code}</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Număr zile:</span>
+                  <span className="font-medium">{calculateDays()}</span>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">{selectedVehicle?.dailyRate} RON/zi</p>
+                <div className="flex justify-between">
+                  <span>Tarif zilnic:</span>
+                  <span className="font-medium">{vehicle.dailyRate} RON</span>
+                </div>
+                <div className="flex justify-between text-lg font-bold text-primary">
+                  <span>Total:</span>
+                  <span>{calculateTotal()} RON</span>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Date Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startDate">Data Începerii</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endDate">Data Încheierii</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  min={startDate || new Date().toISOString().split('T')[0]}
-                  required
-                />
-              </div>
+          <div className="space-y-3">
+            <Label>Modalitate de plată</Label>
+            <div className="grid grid-cols-1 gap-3">
+              <Button
+                variant="outline"
+                className="justify-start h-auto p-4"
+                onClick={() => handlePaymentMethodSelect('cash')}
+              >
+                <Banknote className="w-5 h-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">Numerar</div>
+                  <div className="text-sm text-muted-foreground">Plata la ridicarea vehiculului</div>
+                </div>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="justify-start h-auto p-4"
+                onClick={() => handlePaymentMethodSelect('card')}
+              >
+                <CreditCard className="w-5 h-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">Card bancar</div>
+                  <div className="text-sm text-muted-foreground">Plata online cu cardul</div>
+                </div>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="justify-start h-auto p-4"
+                onClick={() => handlePaymentMethodSelect('transfer')}
+              >
+                <Building2 className="w-5 h-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">Transfer bancar</div>
+                  <div className="text-sm text-muted-foreground">Transfer în contul companiei</div>
+                </div>
+              </Button>
             </div>
+          </div>
 
-            {/* Payment Method Selection */}
-            <div className="space-y-3">
-              <Label>Modalitate de Plată</Label>
-              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="cash" id="cash" />
-                  <Label htmlFor="cash" className="flex items-center gap-2 cursor-pointer">
-                    <Banknote className="w-4 h-4" />
-                    Numerar
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer">
-                    <CreditCard className="w-4 h-4" />
-                    Card Bancar
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="transfer" id="transfer" />
-                  <Label htmlFor="transfer" className="flex items-center gap-2 cursor-pointer">
-                    <ArrowRightLeft className="w-4 h-4" />
-                    Transfer Bancar
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* Calculation Summary */}
-            {totalDays > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-2">
-                  <h3 className="font-medium">Sumar Rezervare</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Numărul de zile</p>
-                      <p className="font-medium">{totalDays} zile</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Tarif zilnic</p>
-                      <p className="font-medium">{selectedVehicle?.dailyRate} RON</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Total estimativ</p>
-                      <p className="font-medium text-lg">{totalAmount} RON</p>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            <Button type="submit" className="w-full" disabled={totalDays <= 0}>
-              <CreditCard className="w-4 h-4 mr-2" />
-              {paymentMethod === 'cash' ? 'Trimite Cererea de Rezervare' : 
-               paymentMethod === 'card' ? 'Continuă cu Plata prin Card' :
-               'Continuă cu Transferul Bancar'}
+          <div className="flex gap-2 pt-4">
+            <Button variant="outline" onClick={onClose} className="flex-1">
+              Anulează
             </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Card Payment Modal */}
       <CardPaymentModal
         isOpen={showCardModal}
         onClose={() => setShowCardModal(false)}
-        onPaymentComplete={handlePaymentComplete}
-        amount={totalAmount}
+        amount={calculateTotal()}
+        onComplete={handleCardPaymentComplete}
       />
 
-      {/* Bank Transfer Modal */}
       <BankTransferModal
-        isOpen={showBankTransferModal}
-        onClose={() => setShowBankTransferModal(false)}
-        onTransferComplete={handlePaymentComplete}
-        amount={totalAmount}
+        isOpen={showBankModal}
+        onClose={() => setShowBankModal(false)}
+        amount={calculateTotal()}
+        onComplete={handleBankTransferComplete}
       />
     </>
   );
