@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PaymentSuccessMessage } from '@/components/payment/PaymentSuccessMessage';
-import { Banknote, MapPin, Clock, CheckCircle } from 'lucide-react';
+import { Banknote, MapPin, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface CashPaymentModalProps {
   isOpen: boolean;
@@ -96,6 +96,17 @@ export const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
                 <strong>Important:</strong> Plata se efectuează la ridicarea vehiculului. 
                 Vă rugăm să aveți suma exactă pregătită.
               </p>
+            </div>
+
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-red-800">
+                    <strong>Atenție!</strong> Trebuie să intrați la secțiunea <strong>Rezervări</strong> pentru a descărca documentele care trebuie completate și ulterior încărcate. Fără aceste documente, rezervarea nu poate fi finalizată.
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
