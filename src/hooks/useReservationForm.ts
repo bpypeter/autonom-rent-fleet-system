@@ -96,12 +96,16 @@ export const useReservationForm = (selectedVehicle: Vehicle | null) => {
 
   const completeReservation = () => {
     if (pendingReservation) {
-      console.log('useReservationForm - Adding reservation to context:', {
+      console.log('useReservationForm - Completing reservation, adding to context:', {
         id: pendingReservation.id,
         code: pendingReservation.code,
         clientId: pendingReservation.clientId
       });
+      
+      // Add reservation to context immediately
       addReservation(pendingReservation);
+      
+      console.log('useReservationForm - Reservation added to context successfully');
       
       // Reset form
       setStartDate('');
@@ -112,6 +116,7 @@ export const useReservationForm = (selectedVehicle: Vehicle | null) => {
       
       return pendingReservation;
     }
+    console.log('useReservationForm - No pending reservation to complete');
     return null;
   };
 

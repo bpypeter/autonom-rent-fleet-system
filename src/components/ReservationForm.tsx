@@ -54,9 +54,18 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
   };
 
   const handlePaymentComplete = () => {
+    console.log('ReservationForm - Payment completed, finalizing reservation...');
     const completedReservation = completeReservation();
+    
     if (completedReservation) {
+      console.log('ReservationForm - Calling onReservationComplete with:', {
+        id: completedReservation.id,
+        code: completedReservation.code,
+        clientId: completedReservation.clientId
+      });
       onReservationComplete(completedReservation);
+    } else {
+      console.error('ReservationForm - No completed reservation returned');
     }
     
     setShowCardModal(false);
