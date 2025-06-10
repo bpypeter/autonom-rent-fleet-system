@@ -9,6 +9,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { Layout } from '@/components/Layout';
 import Index from '@/pages/Index';
+import LoginPage from '@/pages/LoginPage';
 import { VehiclesPage } from '@/pages/VehiclesPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { AllReservationsPage } from '@/pages/AllReservationsPage';
@@ -36,6 +37,7 @@ function App() {
                 <div className="min-h-screen flex w-full">
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/login" element={<LoginPage />} />
                     <Route path="/*" element={
                       <Layout>
                         <Routes>
