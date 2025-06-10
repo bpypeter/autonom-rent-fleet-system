@@ -4,23 +4,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Car, Users, Calendar, CreditCard, TrendingUp, AlertTriangle } from 'lucide-react';
-import { mockVehicles, mockReservations } from '@/data/mockData';
+import { mockVehicles } from '@/data/mockData';
 import { useClients } from '@/contexts/ClientContext';
+import { useReservations } from '@/contexts/ReservationContext';
 
 export const DashboardPage: React.FC = () => {
   const { clients } = useClients();
+  const { reservations } = useReservations();
 
-  // Calculate current month reservations
+  // Calculate current month reservations using context data
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   
-  const currentMonthReservations = mockReservations.filter(reservation => {
+  const currentMonthReservations = reservations.filter(reservation => {
     const reservationDate = new Date(reservation.startDate);
     return reservationDate.getMonth() === currentMonth && reservationDate.getFullYear() === currentYear;
   }).length;
 
-  const totalRevenue = mockReservations
+  const totalRevenue = reservations
     .filter(reservation => {
       const reservationDate = new Date(reservation.startDate);
       return reservationDate.getMonth() === currentMonth && reservationDate.getFullYear() === currentYear;

@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { mockClients } from '@/data/mockData';
 
 interface Client {
   id: string;
@@ -33,35 +34,23 @@ export const useClients = () => {
   return context;
 };
 
+// Convert mockClients to the Client interface format
+const convertedMockClients: Client[] = mockClients.map(client => ({
+  id: client.id,
+  numeComplet: client.name,
+  cnp: client.licenseNumber, // Using licenseNumber as CNP temporarily
+  nrCarteIdentitate: client.code,
+  serieNrPasaport: '',
+  permisConducere: client.licenseNumber,
+  telefon: client.phone,
+  email: client.email,
+  dataInregistrare: new Date(client.createdAt).toISOString().split('T')[0],
+  rezervariActive: 0,
+  totalRezervari: 0
+}));
+
 export const ClientProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [clients, setClients] = useState<Client[]>([
-    {
-      id: '1',
-      numeComplet: 'Ion Popescu',
-      cnp: '1234567890123',
-      nrCarteIdentitate: 'AB123456',
-      serieNrPasaport: '',
-      permisConducere: 'B',
-      telefon: '0712345678',
-      email: 'ion.popescu@email.com',
-      dataInregistrare: '2024-01-15',
-      rezervariActive: 0,
-      totalRezervari: 0
-    },
-    {
-      id: '2',
-      numeComplet: 'Maria Ionescu',
-      cnp: '2345678901234',
-      nrCarteIdentitate: 'CD789012',
-      serieNrPasaport: '',
-      permisConducere: 'B',
-      telefon: '0787654321',
-      email: 'maria.ionescu@email.com',
-      dataInregistrare: '2024-02-20',
-      rezervariActive: 0,
-      totalRezervari: 0
-    }
-  ]);
+  const [clients, setClients] = useState<Client[]>(convertedMockClients);
 
   const addClient = (client: Client) => {
     setClients(prev => [...prev, client]);

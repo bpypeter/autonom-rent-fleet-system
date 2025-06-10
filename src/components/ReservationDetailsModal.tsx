@@ -158,7 +158,7 @@ export const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = (
               </div>
               <div>
                 <span className="text-muted-foreground">Tarif zilnic:</span>
-                <p>{reservation.dailyRate} RON</p>
+                <p>{vehicle?.dailyRate} RON</p>
               </div>
             </div>
           </div>
