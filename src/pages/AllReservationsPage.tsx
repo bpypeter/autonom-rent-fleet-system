@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
 import { useReservations } from '@/contexts/ReservationContext';
 import { mockClients, mockVehicles } from '@/data/mockData';
-import { Search, Filter, Eye, Edit, Trash2, Check, X } from 'lucide-react';
+import { Search, Filter, Eye, Edit, Trash2, Check, X, Car, Calendar, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AllReservationsPage: React.FC = () => {
@@ -82,31 +82,31 @@ export const AllReservationsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 lg:p-6">
       <div>
-        <h1 className="text-3xl font-bold">Toate Rezervările</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold">Toate Rezervările</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Vizualizați și gestionați toate rezervările din sistem
         </p>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Rezervări ({filteredReservations.length})</CardTitle>
-          <CardDescription>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg sm:text-xl">Rezervări ({filteredReservations.length})</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             Lista completă a rezervărilor din sistem
           </CardDescription>
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Căutați după cod, client sau vehicul..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-sm"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -129,25 +129,98 @@ export const AllReservationsPage: React.FC = () => {
                   setSearchTerm('');
                   setStatusFilter('all');
                 }}
+                className="text-xs sm:text-sm"
               >
-                <Filter className="w-4 h-4 mr-2" />
+                <Filter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Reset
               </Button>
             )}
           </div>
 
-          {/* Table */}
-          <div className="rounded-md border">
+          {/* Mobile Cards View */}
+          <div className="block lg:hidden space-y-3">
+            {filteredReservations.map(reservation => {
+              const client = mockClients.find(c => c.id === reservation.clientId);
+              const vehicle = mockVehicles.find(v => v.id === reservation.vehicleId);
+              
+              return (
+                <Card key={reservation.id} className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium text-sm">{reservation.code}</div>
+                        <div className="text-xs text-muted-foreground">{client?.name}</div>
+                        <div className="text-xs text-muted-foreground">{client?.email}</div>
+                      </div>
+                      {getStatusBadge(reservation.status)}
+                    </div>
+                    
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Car className="w-3 h-3" />
+                        <span>{vehicle?.brand} {vehicle?.model}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3 h-3" />
+                        <span>{reservation.startDate} → {reservation.endDate}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="w-3 h-3" />
+                        <span className="font-medium">{reservation.totalAmount} RON</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-2 border-t">
+                      {reservation.status === 'pending' && (
+                        <>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleConfirmReservation(reservation)}
+                            className="text-xs text-green-600 hover:text-green-700 flex-1"
+                          >
+                            <Check className="w-3 h-3 mr-1" />
+                            Confirmă
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleRejectReservation(reservation)}
+                            className="text-xs text-red-600 hover:text-red-700 flex-1"
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Anulează
+                          </Button>
+                        </>
+                      )}
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleViewReservation(reservation)}
+                        className="text-xs flex-1"
+                      >
+                        <Eye className="w-3 h-3 mr-1" />
+                        Vezi
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Cod Rezervare</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Vehicul</TableHead>
-                  <TableHead>Perioada</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Acțiuni</TableHead>
+                  <TableHead className="text-xs">Cod Rezervare</TableHead>
+                  <TableHead className="text-xs">Client</TableHead>
+                  <TableHead className="text-xs">Vehicul</TableHead>
+                  <TableHead className="text-xs">Perioada</TableHead>
+                  <TableHead className="text-xs">Total</TableHead>
+                  <TableHead className="text-xs">Status</TableHead>
+                  <TableHead className="text-xs">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -157,29 +230,29 @@ export const AllReservationsPage: React.FC = () => {
                   
                   return (
                     <TableRow key={reservation.id}>
-                      <TableCell className="font-medium">{reservation.code}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-medium text-xs">{reservation.code}</TableCell>
+                      <TableCell className="text-xs">
                         <div>
                           <div className="font-medium">{client?.name}</div>
-                          <div className="text-sm text-muted-foreground">{client?.email}</div>
+                          <div className="text-muted-foreground">{client?.email}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-xs">
                         <div>
                           <div className="font-medium">{vehicle?.brand} {vehicle?.model}</div>
-                          <div className="text-sm text-muted-foreground">{vehicle?.licensePlate}</div>
+                          <div className="text-muted-foreground">{vehicle?.licensePlate}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
+                      <TableCell className="text-xs">
+                        <div>
                           <div>{reservation.startDate}</div>
                           <div>→ {reservation.endDate}</div>
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">{reservation.totalAmount} RON</TableCell>
+                      <TableCell className="font-medium text-xs">{reservation.totalAmount} RON</TableCell>
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           {reservation.status === 'pending' && (
                             <>
                               <Button 
@@ -187,18 +260,18 @@ export const AllReservationsPage: React.FC = () => {
                                 variant="outline"
                                 onClick={() => handleConfirmReservation(reservation)}
                                 title="Confirmă rezervarea"
-                                className="text-green-600 hover:text-green-700"
+                                className="text-xs h-8 w-8 p-0 text-green-600 hover:text-green-700"
                               >
-                                <Check className="w-4 h-4" />
+                                <Check className="w-3 h-3" />
                               </Button>
                               <Button 
                                 size="sm" 
                                 variant="outline"
                                 onClick={() => handleRejectReservation(reservation)}
                                 title="Anulează rezervarea"
-                                className="text-red-600 hover:text-red-700"
+                                className="text-xs h-8 w-8 p-0 text-red-600 hover:text-red-700"
                               >
-                                <X className="w-4 h-4" />
+                                <X className="w-3 h-3" />
                               </Button>
                             </>
                           )}
@@ -207,24 +280,27 @@ export const AllReservationsPage: React.FC = () => {
                             variant="outline"
                             onClick={() => handleViewReservation(reservation)}
                             title="Vizualizează detalii"
+                            className="text-xs h-8 w-8 p-0"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3 h-3" />
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline"
                             onClick={() => handleEditReservation(reservation)}
                             title="Editează rezervarea"
+                            className="text-xs h-8 w-8 p-0"
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit className="w-3 h-3" />
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline"
                             onClick={() => handleDeleteReservation(reservation)}
                             title="Șterge rezervarea"
+                            className="text-xs h-8 w-8 p-0"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
                       </TableCell>
@@ -237,7 +313,7 @@ export const AllReservationsPage: React.FC = () => {
 
           {filteredReservations.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">Nu au fost găsite rezervări care să corespundă criteriilor.</p>
+              <p className="text-muted-foreground text-sm">Nu au fost găsite rezervări care să corespundă criteriilor.</p>
             </div>
           )}
         </CardContent>
