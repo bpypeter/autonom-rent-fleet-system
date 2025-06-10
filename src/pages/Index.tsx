@@ -26,9 +26,9 @@ const Index = () => {
       case 'admin':
         return '/dashboard';
       case 'operator':
-        return '/fleet';
+        return '/dashboard';  // Changed from '/fleet' to '/dashboard'
       case 'client':
-        return '/vehicles';
+        return '/vehicles';   // Clients go to vehicles, not dashboard
       default:
         return '/vehicles';
     }

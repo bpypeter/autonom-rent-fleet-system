@@ -30,7 +30,7 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: BarChart3,
-      roles: ['admin', 'operator', 'client']
+      roles: ['admin', 'operator']  // Removed 'client' from here
     },
     {
       title: "Vehicule",
@@ -42,7 +42,7 @@ const data = {
       title: "Rezervările Mele",
       url: "/reservations",
       icon: Calendar,
-      roles: ['admin', 'operator', 'client']
+      roles: ['client']  // Only for clients
     },
     {
       title: "Toate Rezervările",
