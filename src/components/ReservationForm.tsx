@@ -21,11 +21,11 @@ interface Vehicle {
 }
 
 interface ReservationFormProps {
-  vehicle: Vehicle;
-  onClose: () => void;
+  selectedVehicle: Vehicle | null;
+  onReservationComplete: (reservationData: any) => void;
 }
 
-export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClose }) => {
+export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicle, onReservationComplete }) => {
   const { addReservation } = useReservations();
   const { user } = useAuth();
   const [startDate, setStartDate] = useState('');
@@ -34,6 +34,19 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
   const [showCardModal, setShowCardModal] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
   
+  // Don't render if no vehicle is selected
+  if (!selectedVehicle) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardContent className="pt-6">
+          <p className="text-center text-muted-foreground">
+            Selectați un vehicul pentru a face o rezervare
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const calculateDays = () => {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
@@ -43,7 +56,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
   };
 
   const calculateTotal = () => {
-    return calculateDays() * vehicle.dailyRate;
+    return calculateDays() * selectedVehicle.dailyRate;
   };
 
   // Generate reservation code
@@ -86,7 +99,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
       id: `reservation_${Date.now()}`,
       code: generateReservationCode(),
       clientId: user.id,
-      vehicleId: vehicle.id,
+      vehicleId: selectedVehicle.id,
       startDate,
       endDate,
       totalDays: calculateDays(),
@@ -98,7 +111,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
     addReservation(newReservation);
     
     toast.success(`Rezervarea ${newReservation.code} a fost creată cu succes și este în așteptarea confirmării!`);
-    onClose();
+    onReservationComplete(newReservation);
   };
 
   const handleCardPaymentComplete = () => {
@@ -120,7 +133,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
             Rezervare Vehicul
           </CardTitle>
           <CardDescription>
-            {vehicle.brand} {vehicle.model} - {vehicle.licensePlate}
+            {selectedVehicle.brand} {selectedVehicle.model} - {selectedVehicle.licensePlate}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -206,12 +219,6 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
               </Button>
             </div>
           </div>
-
-          <div className="flex gap-2 pt-4">
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              Anulează
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
@@ -219,14 +226,14 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ vehicle, onClo
         isOpen={showCardModal}
         onClose={() => setShowCardModal(false)}
         amount={calculateTotal()}
-        onComplete={handleCardPaymentComplete}
+        onPaymentComplete={handleCardPaymentComplete}
       />
 
       <BankTransferModal
         isOpen={showBankModal}
         onClose={() => setShowBankModal(false)}
         amount={calculateTotal()}
-        onComplete={handleBankTransferComplete}
+        onTransferComplete={handleBankTransferComplete}
       />
     </>
   );
