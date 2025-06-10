@@ -84,6 +84,7 @@ export const MyReservationsContent: React.FC<MyReservationsContentProps> = ({
                   handleViewProforma={handleViewProforma}
                   handleCancelReservation={handleCancelReservation}
                   isOperatorOrClient={isOperatorOrClient}
+                  userRole={userRole}
                 />
               );
             })}
@@ -101,7 +102,7 @@ export const MyReservationsContent: React.FC<MyReservationsContentProps> = ({
                   <TableHead className="text-xs whitespace-nowrap">Total</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Status</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Documente</TableHead>
-                  <TableHead className="text-xs whitespace-nowrap">Documente Rezervare</TableHead>
+                  {userRole !== 'client' && <TableHead className="text-xs whitespace-nowrap">Documente Rezervare</TableHead>}
                   <TableHead className="text-xs whitespace-nowrap">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
@@ -122,6 +123,7 @@ export const MyReservationsContent: React.FC<MyReservationsContentProps> = ({
                       handleCancelReservation={handleCancelReservation}
                       isOperatorOrClient={isOperatorOrClient}
                       showClientColumn={userRole === 'admin'}
+                      userRole={userRole}
                     />
                   );
                 })}

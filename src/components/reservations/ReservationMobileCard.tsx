@@ -16,6 +16,7 @@ interface ReservationMobileCardProps {
   handleViewProforma: (reservation: any) => void;
   handleCancelReservation: (reservation: any) => void;
   isOperatorOrClient: boolean;
+  userRole?: string;
 }
 
 export const ReservationMobileCard: React.FC<ReservationMobileCardProps> = ({
@@ -26,7 +27,8 @@ export const ReservationMobileCard: React.FC<ReservationMobileCardProps> = ({
   handleViewReservation,
   handleViewProforma,
   handleCancelReservation,
-  isOperatorOrClient
+  isOperatorOrClient,
+  userRole
 }) => {
   return (
     <Card className="p-3 sm:p-4">
@@ -92,11 +94,13 @@ export const ReservationMobileCard: React.FC<ReservationMobileCardProps> = ({
             reservationCode={reservation.code}
             clientName={client?.name || 'Client necunoscut'}
           />
-          <ReservationDocumentsDropdown
-            reservationId={reservation.id}
-            reservationCode={reservation.code}
-            clientName={client?.name || 'Client necunoscut'}
-          />
+          {userRole !== 'client' && (
+            <ReservationDocumentsDropdown
+              reservationId={reservation.id}
+              reservationCode={reservation.code}
+              clientName={client?.name || 'Client necunoscut'}
+            />
+          )}
         </div>
       </div>
     </Card>

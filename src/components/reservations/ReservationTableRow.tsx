@@ -16,6 +16,7 @@ interface ReservationTableRowProps {
   handleCancelReservation: (reservation: any) => void;
   isOperatorOrClient: boolean;
   showClientColumn: boolean;
+  userRole?: string;
 }
 
 export const ReservationTableRow: React.FC<ReservationTableRowProps> = ({
@@ -27,7 +28,8 @@ export const ReservationTableRow: React.FC<ReservationTableRowProps> = ({
   handleViewProforma,
   handleCancelReservation,
   isOperatorOrClient,
-  showClientColumn
+  showClientColumn,
+  userRole
 }) => {
   return (
     <TableRow>
@@ -61,13 +63,15 @@ export const ReservationTableRow: React.FC<ReservationTableRowProps> = ({
           clientName={client?.name || 'Client necunoscut'}
         />
       </TableCell>
-      <TableCell>
-        <ReservationDocumentsDropdown
-          reservationId={reservation.id}
-          reservationCode={reservation.code}
-          clientName={client?.name || 'Client necunoscut'}
-        />
-      </TableCell>
+      {userRole !== 'client' && (
+        <TableCell>
+          <ReservationDocumentsDropdown
+            reservationId={reservation.id}
+            reservationCode={reservation.code}
+            clientName={client?.name || 'Client necunoscut'}
+          />
+        </TableCell>
+      )}
       <TableCell>
         <div className="flex items-center gap-1">
           <Button 
