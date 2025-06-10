@@ -22,18 +22,11 @@ export const useMyReservations = () => {
       return reservations;
     }
 
-    // For client users, filter by clientId matching username OR containing username pattern
+    // For client users, show only reservations with exact clientId match
     const filtered = reservations.filter(reservation => {
       console.log('useMyReservations - Checking reservation clientId:', reservation.clientId, 'against user:', user.username);
       
-      // For the specific 'client' user, match pattern client_X
-      if (user.username === 'client') {
-        const matches = reservation.clientId === 'client' || reservation.clientId.startsWith('client_');
-        console.log('useMyReservations - Client user match result:', matches, 'for clientId:', reservation.clientId);
-        return matches;
-      }
-      
-      // For other users, exact match only
+      // Exact match only - client should only see reservations where clientId === "client"
       const matches = reservation.clientId === user.username;
       console.log('useMyReservations - Exact match result:', matches, 'for clientId:', reservation.clientId);
       return matches;
