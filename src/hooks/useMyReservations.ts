@@ -22,10 +22,12 @@ export const useMyReservations = () => {
       return reservations;
     }
 
-    // For client users, filter by clientId matching username
+    // For client users, filter by clientId matching username OR containing username pattern
     const filtered = reservations.filter(reservation => {
       console.log('useMyReservations - Checking reservation clientId:', reservation.clientId, 'against user:', user.username);
-      return reservation.clientId === user.username;
+      // Match exact username OR username pattern (for existing mock data)
+      return reservation.clientId === user.username || 
+             (user.username === 'client' && reservation.clientId.startsWith('client_'));
     });
 
     console.log(`useMyReservations - Filtered ${filtered.length} reservations for user ${user.username} (${user.role})`);

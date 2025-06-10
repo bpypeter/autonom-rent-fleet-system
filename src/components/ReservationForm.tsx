@@ -58,6 +58,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     
     if (!selectedVehicle || !user?.username) {
       console.error('ReservationForm - Missing vehicle or user data');
@@ -80,7 +81,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
       const reservationData = {
         id: crypto.randomUUID(),
         code: generateReservationCode(),
-        clientId: user.username, // Using username directly for matching
+        clientId: user.username,
         vehicleId: selectedVehicle.id,
         startDate,
         endDate,
@@ -178,16 +179,18 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
         </CardHeader>
         <CardContent>
           {currentStep === 'details' ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="startDate">Data început</Label>
                   <Input
                     id="startDate"
+                    name="start-date"
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -195,10 +198,12 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                   <Label htmlFor="endDate">Data sfârșit</Label>
                   <Input
                     id="endDate"
+                    name="end-date"
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     min={startDate || new Date().toISOString().split('T')[0]}
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -208,9 +213,11 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                 <Label htmlFor="observations">Observații (opțional)</Label>
                 <Textarea
                   id="observations"
+                  name="observations"
                   value={observations}
                   onChange={(e) => setObservations(e.target.value)}
                   placeholder="Observații sau cerințe speciale..."
+                  autoComplete="off"
                   rows={3}
                 />
               </div>
