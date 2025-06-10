@@ -4,151 +4,191 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AddClientForm } from '@/components/AddClientForm';
 import { ClientDetailsModal } from '@/components/ClientDetailsModal';
+import { AddClientForm } from '@/components/AddClientForm';
 import { useClients } from '@/contexts/ClientContext';
-import { Search, Filter, Plus, Eye, Edit, Phone, Mail, Users } from 'lucide-react';
+import { useReservations } from '@/contexts/ReservationContext';
+import { Search, Filter, Eye, Edit, Trash2, Plus, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const ClientsManagementPage: React.FC = () => {
-  const { clients } = useClients();
+  const { clients, updateClient, deleteClient } = useClients();
+  const { reservations } = useReservations();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedClient, setSelectedClient] = useState<any>(null);
   const [showClientDetails, setShowClientDetails] = useState(false);
+  const [showAddClient, setShowAddClient] = useState(false);
+
+  // Function to get client status based on reservations
+  const getClientStatus = (clientId: string) => {
+    const clientReservations = reservations.filter(res => res.clientId === clientId);
+    
+    if (clientReservations.length === 0) {
+      return 'inactiv';
+    }
+    
+    const hasActiveReservation = clientReservations.some(res => 
+      res.status === 'active' || res.status === 'confirmed'
+    );
+    
+    if (hasActiveReservation) {
+      return 'activ';
+    }
+    
+    return 'inactiv';
+  };
 
   const filteredClients = clients.filter(client => {
-    const matchesSearch = 
-      client.numeComplet.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.telefon.toLowerCase().includes(searchTerm.toLowerCase());
+    const clientStatus = getClientStatus(client.id);
     
-    return matchesSearch;
+    const matchesSearch = 
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.phone.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || clientStatus === statusFilter;
+    
+    return matchesSearch && matchesStatus;
   });
+
+  const getStatusBadge = (clientId: string) => {
+    const status = getClientStatus(clientId);
+    
+    const variants = {
+      activ: 'bg-green-100 text-green-800',
+      inactiv: 'bg-gray-100 text-gray-800'
+    };
+
+    const labels = {
+      activ: 'Activ',
+      inactiv: 'Inactiv'
+    };
+
+    return (
+      <Badge className={variants[status as keyof typeof variants]} variant="secondary">
+        {labels[status as keyof typeof labels]}
+      </Badge>
+    );
+  };
 
   const handleViewClient = (client: any) => {
     setSelectedClient(client);
     setShowClientDetails(true);
   };
 
+  const handleEditClient = (client: any) => {
+    toast.info(`Editare client ${client.name} - Funcționalitate în dezvoltare`);
+  };
+
+  const handleDeleteClient = (client: any) => {
+    deleteClient(client.id);
+    toast.error(`Clientul ${client.name} a fost șters`);
+  };
+
   return (
-    <div className="space-y-3 sm:space-y-4 lg:space-y-6 p-3 sm:p-4 lg:p-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-        <div className="space-y-1 sm:space-y-2">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Gestionare Clienți</h1>
-          <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
+    <div className="space-y-6 p-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Gestionare Clienți</h1>
+          <p className="text-muted-foreground">
             Vizualizați și gestionați clienții înregistrați
           </p>
         </div>
-        <Button onClick={() => setShowAddForm(!showAddForm)} className="text-xs sm:text-sm flex-shrink-0">
-          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-          {showAddForm ? 'Anulează' : 'Adaugă Client'}
+        <Button onClick={() => setShowAddClient(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Adaugă Client
         </Button>
       </div>
 
-      {showAddForm && (
-        <AddClientForm 
-          onClientAdded={() => setShowAddForm(false)}
-        />
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
-        <Card>
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg sm:text-xl lg:text-2xl font-bold">{clients.length}</div>
-                <p className="text-xs sm:text-sm text-muted-foreground">Total Clienți</p>
-              </div>
-              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
-              {clients.filter(c => c.rezervariActive > 0).length}
-            </div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Clienți Activi</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">
-              {clients.reduce((sum, c) => sum + c.totalRezervari, 0)}
-            </div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Total Rezervări</p>
-          </CardContent>
-        </Card>
-      </div>
-
       <Card>
-        <CardHeader className="pb-3 sm:pb-4">
-          <CardTitle className="text-base sm:text-lg lg:text-xl">Lista Clienților</CardTitle>
-          <CardDescription className="text-xs sm:text-sm">
-            Toate informațiile despre clienții înregistrați
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            Clienți ({filteredClients.length})
+          </CardTitle>
+          <CardDescription>
+            Lista clienților înregistrați în sistem
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-3 sm:p-4 lg:p-6">
-          {/* Search */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
+        <CardContent>
+          {/* Filters */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Căutați după nume, email sau telefon..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 sm:pl-10 text-xs sm:text-sm"
+                className="pl-10"
               />
             </div>
-            {searchTerm && (
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder="Toate statusurile" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toate statusurile</SelectItem>
+                <SelectItem value="activ">Activ</SelectItem>
+                <SelectItem value="inactiv">Inactiv</SelectItem>
+              </SelectContent>
+            </Select>
+            {(searchTerm || statusFilter !== 'all') && (
               <Button
                 variant="outline"
-                onClick={() => setSearchTerm('')}
-                className="text-xs sm:text-sm"
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('all');
+                }}
               >
-                <Filter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <Filter className="w-4 h-4 mr-2" />
                 Reset
               </Button>
             )}
           </div>
 
-          {/* Mobile Card View */}
-          <div className="block lg:hidden space-y-3">
+          {/* Mobile Cards View */}
+          <div className="block lg:hidden space-y-4">
             {filteredClients.map(client => (
-              <Card key={client.id} className="p-3">
-                <div className="space-y-2">
+              <Card key={client.id} className="p-4">
+                <div className="space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="font-medium text-sm">{client.numeComplet}</div>
-                      <div className="text-xs text-muted-foreground">CNP: {client.cnp}</div>
+                      <div className="font-medium">{client.name}</div>
+                      <div className="text-sm text-muted-foreground">{client.email}</div>
+                      <div className="text-sm text-muted-foreground">{client.phone}</div>
                     </div>
-                    <Badge variant={client.rezervariActive > 0 ? "default" : "secondary"} className="text-xs">
-                      {client.rezervariActive > 0 ? "Activ" : "Inactiv"}
-                    </Badge>
+                    {getStatusBadge(client.id)}
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1 text-xs">
-                      <Mail className="w-3 h-3" />
-                      {client.email}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs">
-                      <Phone className="w-3 h-3" />
-                      {client.telefon}
-                    </div>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    <div>Total: {client.totalRezervari} | Active: {client.rezervariActive}</div>
-                    <div>Înregistrat: {client.dataInregistrare}</div>
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" onClick={() => handleViewClient(client)} className="text-xs flex-1">
-                      <Eye className="w-3 h-3 mr-1" />
+                  
+                  <div className="flex gap-2 pt-2 border-t">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleViewClient(client)}
+                      className="flex-1"
+                    >
+                      <Eye className="w-3 h-3 mr-2" />
                       Vezi
                     </Button>
-                    <Button size="sm" variant="outline" className="text-xs flex-1">
-                      <Edit className="w-3 h-3 mr-1" />
-                      Edit
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleEditClient(client)}
+                      className="flex-1"
+                    >
+                      <Edit className="w-3 h-3 mr-2" />
+                      Editează
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleDeleteClient(client)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>
@@ -157,58 +197,51 @@ export const ClientsManagementPage: React.FC = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden lg:block rounded-md border overflow-x-auto">
+          <div className="hidden lg:block rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-xs">Client</TableHead>
-                  <TableHead className="text-xs">Contact</TableHead>
-                  <TableHead className="text-xs">Rezervări</TableHead>
-                  <TableHead className="text-xs">Status</TableHead>
-                  <TableHead className="text-xs">Data Înregistrare</TableHead>
-                  <TableHead className="text-xs">Acțiuni</TableHead>
+                  <TableHead>Nume</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Telefon</TableHead>
+                  <TableHead>Data Înregistrării</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClients.map(client => (
                   <TableRow key={client.id}>
+                    <TableCell className="font-medium">{client.name}</TableCell>
+                    <TableCell>{client.email}</TableCell>
+                    <TableCell>{client.phone}</TableCell>
+                    <TableCell>{client.registrationDate}</TableCell>
+                    <TableCell>{getStatusBadge(client.id)}</TableCell>
                     <TableCell>
-                      <div>
-                        <div className="font-medium text-xs">{client.numeComplet}</div>
-                        <div className="text-xs text-muted-foreground">CNP: {client.cnp}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1 text-xs">
-                          <Mail className="w-3 h-3" />
-                          {client.email}
-                        </div>
-                        <div className="flex items-center gap-1 text-xs">
-                          <Phone className="w-3 h-3" />
-                          {client.telefon}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-xs">
-                        <div>Total: {client.totalRezervari}</div>
-                        <div className="text-muted-foreground">Active: {client.rezervariActive}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={client.rezervariActive > 0 ? "default" : "secondary"} className="text-xs">
-                        {client.rezervariActive > 0 ? "Client Activ" : "Inactiv"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-xs">{client.dataInregistrare}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="outline" onClick={() => handleViewClient(client)} className="p-1">
-                          <Eye className="w-3 h-3" />
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleViewClient(client)}
+                          title="Vizualizează detalii client"
+                        >
+                          <Eye className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="outline" className="p-1">
-                          <Edit className="w-3 h-3" />
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleEditClient(client)}
+                          title="Editează client"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleDeleteClient(client)}
+                          title="Șterge client"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -220,7 +253,9 @@ export const ClientsManagementPage: React.FC = () => {
 
           {filteredClients.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-xs sm:text-sm text-muted-foreground">Nu au fost găsiți clienți care să corespundă criteriilor.</p>
+              <p className="text-muted-foreground">
+                Nu au fost găsiți clienți care să corespundă criteriilor.
+              </p>
             </div>
           )}
         </CardContent>
@@ -234,6 +269,10 @@ export const ClientsManagementPage: React.FC = () => {
           setSelectedClient(null);
         }}
       />
+
+      {showAddClient && (
+        <AddClientForm onClose={() => setShowAddClient(false)} />
+      )}
     </div>
   );
 };

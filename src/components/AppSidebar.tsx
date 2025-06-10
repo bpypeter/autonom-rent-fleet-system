@@ -33,7 +33,7 @@ const menuItems = {
   ],
   operator: [
     { title: 'Administrare Flotă', url: '/fleet', icon: Car },
-    { title: 'Rezervări', url: '/reservations', icon: Calendar },
+    { title: 'Toate Rezervările', url: '/all-reservations', icon: Calendar },
     { title: 'Returnări', url: '/returns', icon: FileText },
     { title: 'Clienți', url: '/clients', icon: Users },
   ],
