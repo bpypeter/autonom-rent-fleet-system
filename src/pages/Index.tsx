@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const Index = () => {
   const { isAuthenticated, user } = useAuth();
 
+  // Force redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
