@@ -22,7 +22,8 @@ export const useMyReservations = () => {
       return reservations;
     }
 
-    // For client users, show reservations where clientId matches their pattern
+    // For client users, show only reservations with clientId exactly "client"
+    // This means only reservations created by the logged-in client user
     const filtered = reservations.filter(reservation => {
       console.log('useMyReservations - Checking reservation:', {
         reservationId: reservation.id,
@@ -31,10 +32,9 @@ export const useMyReservations = () => {
         userUsername: user.username
       });
       
-      // For the "client" user, match both "client" and reservations created by this user
-      // This handles both new reservations (clientId: "client") and any existing ones
-      const matches = reservation.clientId === 'client' || 
-                     (user.username === 'client' && reservation.clientId.startsWith('client'));
+      // For the "client" user, show only reservations with exact clientId: "client"
+      // This excludes mock data reservations (client_1, client_2, etc.)
+      const matches = reservation.clientId === 'client';
       
       console.log('useMyReservations - Match result:', matches);
       return matches;
