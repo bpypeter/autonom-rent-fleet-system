@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { ChevronUp, User2, Calendar, Car, FileText, DollarSign, Settings, LogOut, Users, BarChart3, ClipboardList, History, MessageSquare } from "lucide-react"
 
@@ -84,13 +83,13 @@ const data = {
       title: "Istoric",
       url: "/history",
       icon: History,
-      roles: ['admin', 'operator', 'client']
+      roles: ['admin', 'client']  // Removed 'operator'
     },
     {
       title: "Feedback",
       url: "/feedback",
       icon: MessageSquare,
-      roles: ['admin', 'operator', 'client']
+      roles: ['admin', 'client']  // Removed 'operator'
     },
     {
       title: "Setări",
