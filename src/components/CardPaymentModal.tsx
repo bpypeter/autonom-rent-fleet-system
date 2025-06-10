@@ -4,38 +4,50 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PaymentSuccessMessage } from '@/components/payment/PaymentSuccessMessage';
 import { CreditCard, Lock } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface CardPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onPaymentComplete: () => void;
   amount: number;
+  onPaymentComplete: () => void;
+  reservationCode?: string;
 }
 
 export const CardPaymentModal: React.FC<CardPaymentModalProps> = ({
   isOpen,
   onClose,
+  amount,
   onPaymentComplete,
-  amount
+  reservationCode = ''
 }) => {
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
-  const [cardholderName, setCardholderName] = useState('');
+  const [cardName, setCardName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const handlePayment = async () => {
+    setIsProcessing(true);
+    
+    // Simulare procesare plată
+    setTimeout(() => {
+      setIsProcessing(false);
+      setPaymentSuccess(true);
+      onPaymentComplete();
+    }, 2000);
+  };
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     const matches = v.match(/\d{4,16}/g);
     const match = matches && matches[0] || '';
     const parts = [];
-
     for (let i = 0, len = match.length; i < len; i += 4) {
       parts.push(match.substring(i, i + 4));
     }
-
     if (parts.length) {
       return parts.join(' ');
     } else {
@@ -44,118 +56,103 @@ export const CardPaymentModal: React.FC<CardPaymentModalProps> = ({
   };
 
   const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const v = value.replace(/\D/g, '');
     if (v.length >= 2) {
       return v.substring(0, 2) + '/' + v.substring(2, 4);
     }
     return v;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
-      toast.error('Vă rugăm să completați toate câmpurile');
-      return;
-    }
-
-    setIsProcessing(true);
-
-    // Simulează procesarea plății
-    setTimeout(() => {
-      setIsProcessing(false);
-      toast.success('Plata a fost procesată cu succes!');
-      
-      // Reset form
-      setCardNumber('');
-      setExpiryDate('');
-      setCvv('');
-      setCardholderName('');
-      
-      onPaymentComplete();
-    }, 2000);
-  };
+  if (paymentSuccess) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-md">
+          <PaymentSuccessMessage
+            isVisible={true}
+            paymentMethod="card"
+            reservationCode={reservationCode}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="w-5 h-5" />
-            Plata cu Cardul
+            Plată cu Cardul
           </DialogTitle>
           <DialogDescription>
-            Introduceți datele cardului pentru a procesa plata de {amount} RON
+            Introduceți datele cardului pentru plata de {amount} RON
           </DialogDescription>
         </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="cardNumber">Numărul Cardului</Label>
+            <Label htmlFor="cardNumber">Numărul cardului</Label>
             <Input
               id="cardNumber"
-              type="text"
               placeholder="1234 5678 9012 3456"
               value={cardNumber}
               onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
               maxLength={19}
-              required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="expiryDate">Data Expirării</Label>
+              <Label htmlFor="expiryDate">Data expirării</Label>
               <Input
                 id="expiryDate"
-                type="text"
                 placeholder="MM/YY"
                 value={expiryDate}
                 onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
                 maxLength={5}
-                required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cvv">CVV</Label>
               <Input
                 id="cvv"
-                type="text"
                 placeholder="123"
                 value={cvv}
-                onChange={(e) => setCvv(e.target.value.replace(/[^0-9]/g, ''))}
-                maxLength={4}
-                required
+                onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').substring(0, 3))}
+                maxLength={3}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cardholderName">Numele Posesorului</Label>
+            <Label htmlFor="cardName">Numele de pe card</Label>
             <Input
-              id="cardholderName"
-              type="text"
+              id="cardName"
               placeholder="NUME PRENUME"
-              value={cardholderName}
-              onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
-              required
+              value={cardName}
+              onChange={(e) => setCardName(e.target.value.toUpperCase())}
             />
           </div>
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Lock className="w-4 h-4" />
-            <span>Datele sunt securizate și criptate</span>
+            Plata dvs. este securizată și criptată
           </div>
 
-          <div className="flex gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+          <div className="flex gap-3 pt-4">
+            <Button variant="outline" onClick={onClose} className="flex-1">
               Anulează
             </Button>
-            <Button type="submit" disabled={isProcessing} className="flex-1">
+            <Button 
+              onClick={handlePayment} 
+              disabled={isProcessing || !cardNumber || !expiryDate || !cvv || !cardName}
+              className="flex-1"
+            >
               {isProcessing ? 'Se procesează...' : `Plătește ${amount} RON`}
             </Button>
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

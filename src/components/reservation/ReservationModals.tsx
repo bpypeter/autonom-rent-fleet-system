@@ -9,6 +9,7 @@ interface ReservationModalsProps {
   showBankModal: boolean;
   showCashModal: boolean;
   amount: number;
+  reservationCode: string;
   onCloseCardModal: () => void;
   onCloseBankModal: () => void;
   onCloseCashModal: () => void;
@@ -22,6 +23,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
   showBankModal,
   showCashModal,
   amount,
+  reservationCode,
   onCloseCardModal,
   onCloseBankModal,
   onCloseCashModal,
@@ -35,6 +37,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
         isOpen={showCardModal}
         onClose={onCloseCardModal}
         amount={amount}
+        reservationCode={reservationCode}
         onPaymentComplete={onCardPaymentComplete}
       />
 
@@ -42,6 +45,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
         isOpen={showBankModal}
         onClose={onCloseBankModal}
         amount={amount}
+        reservationCode={reservationCode}
         onTransferComplete={onBankTransferComplete}
       />
 
@@ -49,6 +53,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
         isOpen={showCashModal}
         onClose={onCloseCashModal}
         amount={amount}
+        reservationCode={reservationCode}
         onPaymentComplete={onCashPaymentComplete}
       />
     </>

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
 import { ProformaInvoiceModal } from '@/components/ProformaInvoiceModal';
+import { DocumentsDropdown } from '@/components/documents/DocumentsDropdown';
 import { useReservations } from '@/contexts/ReservationContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockClients, mockVehicles } from '@/data/mockData';
@@ -220,6 +221,15 @@ export const MyReservationsPage: React.FC = () => {
                         </Button>
                       )}
                     </div>
+
+                    {/* Documents section for mobile */}
+                    <div className="pt-2 border-t">
+                      <DocumentsDropdown
+                        reservationId={reservation.id}
+                        reservationCode={reservation.code}
+                        clientName={client?.name || ''}
+                      />
+                    </div>
                   </div>
                 </Card>
               );
@@ -237,6 +247,7 @@ export const MyReservationsPage: React.FC = () => {
                   <TableHead className="text-xs whitespace-nowrap">Perioada</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Total</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Status</TableHead>
+                  <TableHead className="text-xs whitespace-nowrap">Documente</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
@@ -270,6 +281,13 @@ export const MyReservationsPage: React.FC = () => {
                       </TableCell>
                       <TableCell className="font-medium text-xs">{reservation.totalAmount} RON</TableCell>
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
+                      <TableCell>
+                        <DocumentsDropdown
+                          reservationId={reservation.id}
+                          reservationCode={reservation.code}
+                          clientName={client?.name || ''}
+                        />
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <Button 
