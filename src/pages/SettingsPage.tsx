@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,11 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Settings, Shield, Bell, Database, Mail, Globe } from 'lucide-react';
+import { BackupManualModal } from '@/components/BackupManualModal';
+import { RestoreBackupModal } from '@/components/RestoreBackupModal';
+import { BackupHistoryModal } from '@/components/BackupHistoryModal';
 
 export const SettingsPage: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [autoBackup, setAutoBackup] = useState(true);
+  
+  // Modal states
+  const [backupModalOpen, setBackupModalOpen] = useState(false);
+  const [restoreModalOpen, setRestoreModalOpen] = useState(false);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -295,9 +302,24 @@ export const SettingsPage: React.FC = () => {
               <div className="space-y-4">
                 <h4 className="font-medium">Acțiuni Backup</h4>
                 <div className="flex gap-4">
-                  <Button variant="outline">Backup Manual</Button>
-                  <Button variant="outline">Restaurare Backup</Button>
-                  <Button variant="outline">Vizualizare Istoric</Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setBackupModalOpen(true)}
+                  >
+                    Backup Manual
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setRestoreModalOpen(true)}
+                  >
+                    Restaurare Backup
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setHistoryModalOpen(true)}
+                  >
+                    Vizualizare Istoric
+                  </Button>
                 </div>
               </div>
 
@@ -399,6 +421,20 @@ export const SettingsPage: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Backup Modals */}
+      <BackupManualModal 
+        open={backupModalOpen} 
+        onOpenChange={setBackupModalOpen} 
+      />
+      <RestoreBackupModal 
+        open={restoreModalOpen} 
+        onOpenChange={setRestoreModalOpen} 
+      />
+      <BackupHistoryModal 
+        open={historyModalOpen} 
+        onOpenChange={setHistoryModalOpen} 
+      />
     </div>
   );
 };
