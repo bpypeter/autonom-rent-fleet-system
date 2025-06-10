@@ -2,7 +2,7 @@
 import React from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { FileText, Upload, Download, CheckCircle } from 'lucide-react';
+import { FileText, Upload, Download, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface PaymentSuccessMessageProps {
@@ -65,6 +65,18 @@ export const PaymentSuccessMessage: React.FC<PaymentSuccessMessageProps> = ({
                       Încărcați documentele completate și semnate
                     </li>
                   </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="font-medium text-red-900">Atenție!</p>
+                  <p className="text-sm text-red-800">
+                    Trebuie să intrați la secțiunea <strong>Rezervări</strong> pentru a descărca documentele care trebuie completate și ulterior încărcate. Fără aceste documente, rezervarea nu poate fi finalizată.
+                  </p>
                 </div>
               </div>
             </div>
