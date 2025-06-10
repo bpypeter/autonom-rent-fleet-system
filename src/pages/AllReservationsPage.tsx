@@ -179,14 +179,14 @@ export const AllReservationsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-2 border-t">
+                    <div className="flex flex-col gap-2 pt-2 border-t">
                       {reservation.status === 'pending' && (
-                        <>
+                        <div className="flex gap-2">
                           <Button 
                             size="sm" 
                             variant="outline"
                             onClick={() => handleConfirmReservation(reservation)}
-                            className="text-xs text-green-600 hover:text-green-700 flex-1"
+                            className="text-xs text-green-600 hover:text-green-700 flex-1 h-8 px-2"
                           >
                             <Check className="w-3 h-3 mr-1" />
                             Confirmă
@@ -195,61 +195,63 @@ export const AllReservationsPage: React.FC = () => {
                             size="sm" 
                             variant="outline"
                             onClick={() => handleRejectReservation(reservation)}
-                            className="text-xs text-red-600 hover:text-red-700 flex-1"
+                            className="text-xs text-red-600 hover:text-red-700 flex-1 h-8 px-2"
                           >
                             <X className="w-3 h-3 mr-1" />
                             Anulează
                           </Button>
-                        </>
+                        </div>
                       )}
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleViewReservation(reservation)}
-                        className="text-xs flex-1"
-                      >
-                        <Eye className="w-3 h-3 mr-1" />
-                        Vezi
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="text-xs flex-1"
-                          >
-                            <Edit className="w-3 h-3 mr-1" />
-                            Editează
-                            <ChevronDown className="w-3 h-3 ml-1" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(reservation, 'active')}
-                            className="text-xs"
-                          >
-                            Activă
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(reservation, 'confirmed')}
-                            className="text-xs"
-                          >
-                            Confirmată
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(reservation, 'pending')}
-                            className="text-xs"
-                          >
-                            În așteptare
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(reservation, 'cancelled')}
-                            className="text-xs"
-                          >
-                            Anulată
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="flex gap-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleViewReservation(reservation)}
+                          className="text-xs flex-1 h-8 px-2"
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          Vezi
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="text-xs flex-1 h-8 px-2"
+                            >
+                              <Edit className="w-3 h-3 mr-1" />
+                              Status
+                              <ChevronDown className="w-3 h-3 ml-1" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(reservation, 'active')}
+                              className="text-xs"
+                            >
+                              Activă
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(reservation, 'confirmed')}
+                              className="text-xs"
+                            >
+                              Confirmată
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(reservation, 'pending')}
+                              className="text-xs"
+                            >
+                              În așteptare
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(reservation, 'cancelled')}
+                              className="text-xs"
+                            >
+                              Anulată
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
                   </div>
                 </Card>
