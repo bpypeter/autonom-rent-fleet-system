@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog } from '@/components/ui/dialog';
 import { VehicleDetailsModal } from '@/components/VehicleDetailsModal';
+import { EditVehicleForm } from '@/components/EditVehicleForm';
 import { mockVehicles } from '@/data/mockData';
+import { Vehicle } from '@/types';
 import { Search, Filter, Plus, Edit, Eye, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -15,8 +17,10 @@ export const FleetManagementPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [brandFilter, setBrandFilter] = useState('all');
-  const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showVehicleDetails, setShowVehicleDetails] = useState(false);
+  const [showEditVehicle, setShowEditVehicle] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
 
   const filteredVehicles = mockVehicles.filter(vehicle => {
     const matchesSearch = 
@@ -55,16 +59,29 @@ export const FleetManagementPage: React.FC = () => {
     );
   };
 
-  const handleViewVehicle = (vehicle: any) => {
+  const handleViewVehicle = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
     setShowVehicleDetails(true);
   };
 
-  const handleEditVehicle = (vehicle: any) => {
-    toast.info(`Editare vehicul ${vehicle.code} - Funcționalitate în dezvoltare`);
+  const handleEditVehicle = (vehicle: Vehicle) => {
+    setEditingVehicle(vehicle);
+    setShowEditVehicle(true);
   };
 
-  const handleDeleteVehicle = (vehicle: any) => {
+  const handleSaveVehicle = (updatedVehicle: Vehicle) => {
+    // În practică, aici ar fi apelul către API pentru salvare
+    console.log('Vehicul actualizat:', updatedVehicle);
+    setShowEditVehicle(false);
+    setEditingVehicle(null);
+  };
+
+  const handleCancelEdit = () => {
+    setShowEditVehicle(false);
+    setEditingVehicle(null);
+  };
+
+  const handleDeleteVehicle = (vehicle: Vehicle) => {
     toast.error(`Ștergere vehicul ${vehicle.code} - Funcționalitate în dezvoltare`);
   };
 
@@ -112,8 +129,8 @@ export const FleetManagementPage: React.FC = () => {
               {mockVehicles.filter(v => v.status === 'maintenance').length}
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground">Service</p>
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
 
       <Card>
@@ -298,6 +315,16 @@ export const FleetManagementPage: React.FC = () => {
           setSelectedVehicle(null);
         }}
       />
+
+      <Dialog open={showEditVehicle} onOpenChange={setShowEditVehicle}>
+        {editingVehicle && (
+          <EditVehicleForm
+            vehicle={editingVehicle}
+            onSave={handleSaveVehicle}
+            onCancel={handleCancelEdit}
+          />
+        )}
+      </Dialog>
     </div>
   );
 };
