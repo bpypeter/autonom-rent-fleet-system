@@ -24,21 +24,34 @@ export const useMyReservations = () => {
 
     // For client users, show reservations where clientId matches their username
     const filtered = reservations.filter(reservation => {
-      console.log('useMyReservations - Checking reservation clientId:', reservation.clientId, 'against user:', user.username);
+      console.log('useMyReservations - Checking reservation:', {
+        reservationId: reservation.id,
+        code: reservation.code,
+        clientId: reservation.clientId,
+        userUsername: user.username
+      });
       
-      // For the "client" user specifically, show reservations with exact match
-      // This will show new reservations created with clientId: "client"
       const matches = reservation.clientId === user.username;
-      console.log('useMyReservations - Match result:', matches, 'for clientId:', reservation.clientId);
+      console.log('useMyReservations - Match result:', matches);
       return matches;
     });
 
     console.log(`useMyReservations - Filtered ${filtered.length} reservations for user ${user.username} (${user.role})`);
     
-    // Log the actual reservations for debugging
-    filtered.forEach(res => {
-      console.log('useMyReservations - User reservation:', res.code, 'clientId:', res.clientId, 'status:', res.status);
-    });
+    // Log the actual matching reservations for debugging
+    if (filtered.length > 0) {
+      console.log('useMyReservations - Found matching reservations:');
+      filtered.forEach(res => {
+        console.log('  - Reservation:', res.code, 'clientId:', res.clientId, 'status:', res.status);
+      });
+    } else {
+      console.log('useMyReservations - No matching reservations found');
+      // Log all reservations to see what's available
+      console.log('useMyReservations - All available reservations:');
+      reservations.forEach(res => {
+        console.log('  - Reservation:', res.code, 'clientId:', res.clientId, 'status:', res.status);
+      });
+    }
     
     return filtered;
   }, [reservations, user?.username, user?.role]);

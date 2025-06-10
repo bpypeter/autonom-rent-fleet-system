@@ -80,7 +80,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
       const reservationData = {
         id: crypto.randomUUID(),
         code: generateReservationCode(),
-        clientId: user.username,
+        clientId: user.username, // This should be "client" for the client user
         vehicleId: selectedVehicle.id,
         startDate,
         endDate,
@@ -91,7 +91,11 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
         observations: observations || ''
       };
 
-      console.log('ReservationForm - Creating reservation with clientId:', user.username);
+      console.log('ReservationForm - Creating reservation with data:', {
+        clientId: reservationData.clientId,
+        username: user.username,
+        code: reservationData.code
+      });
       
       setPendingReservation(reservationData);
       setCurrentStep('payment');
@@ -121,7 +125,11 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
 
   const handlePaymentComplete = () => {
     if (pendingReservation) {
-      console.log('ReservationForm - Adding reservation to context:', pendingReservation);
+      console.log('ReservationForm - Adding reservation to context:', {
+        id: pendingReservation.id,
+        code: pendingReservation.code,
+        clientId: pendingReservation.clientId
+      });
       addReservation(pendingReservation);
       onReservationComplete(pendingReservation);
       
@@ -189,8 +197,13 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                     onChange={(e) => setStartDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
                     required
-                    autoComplete="new-password"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
                     data-form-type="other"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
                   />
                 </div>
                 <div className="space-y-2">
@@ -202,8 +215,13 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                     onChange={(e) => setEndDate(e.target.value)}
                     min={startDate || new Date().toISOString().split('T')[0]}
                     required
-                    autoComplete="new-password"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
                     data-form-type="other"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
                   />
                 </div>
               </div>
@@ -216,8 +234,13 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({
                   onChange={(e) => setObservations(e.target.value)}
                   placeholder="Observații sau cerințe speciale..."
                   rows={3}
-                  autoComplete="new-password"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck="false"
                   data-form-type="other"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
                 />
               </div>
 
