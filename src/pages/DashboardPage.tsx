@@ -50,7 +50,7 @@ export const DashboardPage: React.FC = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-background border rounded-lg p-2 shadow-md text-xs sm:text-sm">
+        <div className="bg-background border rounded-lg p-2 shadow-md text-xs">
           <p className="font-medium">{`${label}`}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} style={{ color: entry.color }}>
@@ -64,83 +64,83 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-2 sm:p-4 lg:p-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard Administrator</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+    <div className="space-y-3 sm:space-y-4 lg:space-y-6 p-3 sm:p-4 lg:p-6">
+      <div className="space-y-1 sm:space-y-2">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Dashboard Administrator</h1>
+        <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
           Prezentare generală a performanțelor sistemului
         </p>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">{mockVehicles.length}</div>
-                <p className="text-xs sm:text-sm text-muted-foreground">Total Vehicule</p>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="space-y-1">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold">{mockVehicles.length}</div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-tight">Total Vehicule</p>
               </div>
-              <Car className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+              <Car className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-blue-600 flex-shrink-0" />
             </div>
             <div className="mt-2">
               <Badge variant="outline" className="text-green-600 text-xs">
-                <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                +5% vs luna trecută
+                <TrendingUp className="w-2 h-2 mr-1" />
+                +5%
               </Badge>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">{clients.length}</div>
-                <p className="text-xs sm:text-sm text-muted-foreground">Total Clienți</p>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="space-y-1">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold">{clients.length}</div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-tight">Total Clienți</p>
               </div>
-              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
+              <Users className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-green-600 flex-shrink-0" />
             </div>
             <div className="mt-2">
               <Badge variant="outline" className="text-green-600 text-xs">
-                <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                +12% vs luna trecută
+                <TrendingUp className="w-2 h-2 mr-1" />
+                +12%
               </Badge>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">{currentMonthReservations}</div>
-                <p className="text-xs sm:text-sm text-muted-foreground">Rezervări Luna Curentă</p>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="space-y-1">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold">{currentMonthReservations}</div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-tight">Rezervări Luna</p>
               </div>
-              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
+              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-purple-600 flex-shrink-0" />
             </div>
             <div className="mt-2">
               <Badge variant="outline" className="text-green-600 text-xs">
-                <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                +8% vs luna trecută
+                <TrendingUp className="w-2 h-2 mr-1" />
+                +8%
               </Badge>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg sm:text-2xl font-bold">{totalRevenue.toLocaleString()}</div>
-                <p className="text-xs sm:text-sm text-muted-foreground">Venituri Luna (RON)</p>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="space-y-1">
+                <div className="text-sm sm:text-lg lg:text-2xl font-bold">{totalRevenue.toLocaleString()}</div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-tight">Venituri (RON)</p>
               </div>
-              <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600" />
+              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-yellow-600 flex-shrink-0" />
             </div>
             <div className="mt-2">
               <Badge variant="outline" className="text-green-600 text-xs">
-                <TrendingUp className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                +15% vs luna trecută
+                <TrendingUp className="w-2 h-2 mr-1" />
+                +15%
               </Badge>
             </div>
           </CardContent>
@@ -148,23 +148,25 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
         {/* Monthly Performance Chart */}
         <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg sm:text-xl">Performanță Lunară</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Rezervări și venituri pe ultimele 6 luni</CardDescription>
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="text-base sm:text-lg lg:text-xl">Performanță Lunară</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Rezervări pe ultimele 6 luni</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={monthlyData}>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={monthlyData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 10 }}
+                  interval={0}
                 />
                 <YAxis 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 10 }}
+                  width={30}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="rezervari" fill="#3B82F6" name="Rezervări" />
@@ -175,12 +177,12 @@ export const DashboardPage: React.FC = () => {
 
         {/* Vehicle Status Pie Chart */}
         <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg sm:text-xl">Status Vehicule</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Distribuția actuală a statutului vehiculelor</CardDescription>
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="text-base sm:text-lg lg:text-xl">Status Vehicule</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Distribuția actuală</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
                   data={vehicleStatusData}
@@ -188,7 +190,7 @@ export const DashboardPage: React.FC = () => {
                   cy="50%"
                   labelLine={false}
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
+                  outerRadius={60}
                   fill="#8884d8"
                   dataKey="value"
                 >
@@ -204,32 +206,32 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Recent Activities and Alerts */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
         <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg sm:text-xl">Activități Recente</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Ultimele acțiuni din sistem</CardDescription>
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="text-base sm:text-lg lg:text-xl">Activități Recente</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Ultimele acțiuni</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                <div className="text-xs sm:text-sm">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2"></div>
+                <div className="text-xs sm:text-sm min-w-0">
                   <span className="font-medium">Ion Popescu</span> a creat o rezervare nouă
                   <div className="text-muted-foreground text-xs">Acum 2 ore</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                <div className="text-xs sm:text-sm">
-                  <span className="font-medium">Toyota Corolla (B-123-ABC)</span> a fost returnată
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                <div className="text-xs sm:text-sm min-w-0">
+                  <span className="font-medium">Toyota Corolla</span> returnată
                   <div className="text-muted-foreground text-xs">Acum 4 ore</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
-                <div className="text-xs sm:text-sm">
-                  <span className="font-medium">Maria Ionescu</span> s-a înregistrat ca client nou
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0 mt-2"></div>
+                <div className="text-xs sm:text-sm min-w-0">
+                  <span className="font-medium">Maria Ionescu</span> client nou
                   <div className="text-muted-foreground text-xs">Ieri</div>
                 </div>
               </div>
@@ -238,21 +240,21 @@ export const DashboardPage: React.FC = () => {
         </Card>
 
         <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg lg:text-xl">
+              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0" />
               Alerte și Notificări
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Situații care necesită atenție</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Situații importante</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="space-y-3 sm:space-y-4">
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <div className="text-xs sm:text-sm font-medium text-yellow-800">
-                  2 vehicule necesită service programat
+                  2 vehicule necesită service
                 </div>
                 <div className="text-xs text-yellow-600 mt-1">
-                  Ford Focus și BMW X3 au depășit kilometrajul pentru service
+                  Ford Focus și BMW X3
                 </div>
               </div>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -260,7 +262,7 @@ export const DashboardPage: React.FC = () => {
                   5 rezervări expiră mâine
                 </div>
                 <div className="text-xs text-blue-600 mt-1">
-                  Verificați returnările programate pentru 02.12.2024
+                  Verificați returnările
                 </div>
               </div>
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -268,7 +270,7 @@ export const DashboardPage: React.FC = () => {
                   Sistem funcționează normal
                 </div>
                 <div className="text-xs text-green-600 mt-1">
-                  Toate serviciile sunt operaționale
+                  Toate serviciile OK
                 </div>
               </div>
             </div>
