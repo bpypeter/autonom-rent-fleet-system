@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useReservations } from '@/contexts/ReservationContext';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
 import { mockVehicles } from '@/data/mockData';
 import { Calendar, Car, Plus, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -13,8 +13,21 @@ import { Link } from 'react-router-dom';
 export const MyReservationsPage: React.FC = () => {
   const { user } = useAuth();
   const { reservations } = useReservations();
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const userReservations = reservations.filter(r => r.clientId === user?.id);
+
+  const handleViewReservation = (reservation: any) => {
+    console.log('Opening reservation details for:', reservation);
+    setSelectedReservation(reservation);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedReservation(null);
+  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -145,7 +158,11 @@ export const MyReservationsPage: React.FC = () => {
                         <TableCell className="font-medium">{reservation.totalAmount} RON</TableCell>
                         <TableCell>{getStatusBadge(reservation.status)}</TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewReservation(reservation)}
+                          >
                             <Eye className="w-4 h-4" />
                           </Button>
                         </TableCell>
@@ -158,6 +175,12 @@ export const MyReservationsPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      <ReservationDetailsModal
+        reservation={selectedReservation}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
