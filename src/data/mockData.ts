@@ -1,3 +1,4 @@
+
 import { Client, Vehicle, Reservation, Payment, Feedback, VehicleReturn } from '@/types';
 
 // Generate code function
@@ -65,6 +66,7 @@ export const mockVehicles: Vehicle[] = Array.from({ length: 30 }, (_, i) => {
   const model = models[brand][Math.floor(Math.random() * models[brand].length)];
   const colors = ['Alb', 'Negru', 'Gri', 'Albastru', 'Roșu', 'Verde', 'Argintiu'];
   const statuses: Vehicle['status'][] = ['available', 'rented', 'maintenance', 'inactive'];
+  const dailyRate = 50 + Math.floor(Math.random() * 200);
   
   return {
     id: `vehicle_${i + 1}`,
@@ -77,7 +79,8 @@ export const mockVehicles: Vehicle[] = Array.from({ length: 30 }, (_, i) => {
     fuelType: ['Benzină', 'Diesel', 'Hibrid', 'Electric'][Math.floor(Math.random() * 4)],
     transmission: Math.random() > 0.3 ? 'Manuală' : 'Automată',
     seats: [2, 4, 5, 7][Math.floor(Math.random() * 4)],
-    dailyRate: 50 + Math.floor(Math.random() * 200),
+    dailyRate,
+    pricePerDay: dailyRate, // Added for compatibility
     status: i < 20 ? 'available' : statuses[Math.floor(Math.random() * statuses.length)],
     mileage: 10000 + Math.floor(Math.random() * 100000),
     lastService: new Date(2024, Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1).toISOString(),
