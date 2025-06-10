@@ -11,6 +11,11 @@ interface PaymentMethodSectionProps {
 export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
   onPaymentMethodSelect
 }) => {
+  const handlePaymentSelect = (method: string) => {
+    console.log(`PaymentMethodSection - Selected payment method: ${method}`);
+    onPaymentMethodSelect(method);
+  };
+
   return (
     <div className="space-y-3">
       <Label>Modalitate de plată</Label>
@@ -18,7 +23,7 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
         <Button
           variant="outline"
           className="justify-start h-auto p-4"
-          onClick={() => onPaymentMethodSelect('cash')}
+          onClick={() => handlePaymentSelect('cash')}
         >
           <Banknote className="w-5 h-5 mr-3" />
           <div className="text-left">
@@ -30,7 +35,7 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
         <Button
           variant="outline"
           className="justify-start h-auto p-4"
-          onClick={() => onPaymentMethodSelect('card')}
+          onClick={() => handlePaymentSelect('card')}
         >
           <CreditCard className="w-5 h-5 mr-3" />
           <div className="text-left">
@@ -42,7 +47,7 @@ export const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
         <Button
           variant="outline"
           className="justify-start h-auto p-4"
-          onClick={() => onPaymentMethodSelect('transfer')}
+          onClick={() => handlePaymentSelect('transfer')}
         >
           <Building2 className="w-5 h-5 mr-3" />
           <div className="text-left">

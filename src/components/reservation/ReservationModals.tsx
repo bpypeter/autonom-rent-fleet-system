@@ -31,6 +31,21 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
   onBankTransferComplete,
   onCashPaymentComplete
 }) => {
+  const handleCardPaymentComplete = () => {
+    console.log('ReservationModals - Card payment completed, calling onCardPaymentComplete');
+    onCardPaymentComplete();
+  };
+
+  const handleBankTransferComplete = () => {
+    console.log('ReservationModals - Bank transfer completed, calling onBankTransferComplete');
+    onBankTransferComplete();
+  };
+
+  const handleCashPaymentComplete = () => {
+    console.log('ReservationModals - Cash payment completed, calling onCashPaymentComplete');
+    onCashPaymentComplete();
+  };
+
   return (
     <>
       <CardPaymentModal
@@ -38,7 +53,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
         onClose={onCloseCardModal}
         amount={amount}
         reservationCode={reservationCode}
-        onPaymentComplete={onCardPaymentComplete}
+        onPaymentComplete={handleCardPaymentComplete}
       />
 
       <BankTransferModal
@@ -46,7 +61,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
         onClose={onCloseBankModal}
         amount={amount}
         reservationCode={reservationCode}
-        onTransferComplete={onBankTransferComplete}
+        onTransferComplete={handleBankTransferComplete}
       />
 
       <CashPaymentModal
@@ -54,7 +69,7 @@ export const ReservationModals: React.FC<ReservationModalsProps> = ({
         onClose={onCloseCashModal}
         amount={amount}
         reservationCode={reservationCode}
-        onPaymentComplete={onCashPaymentComplete}
+        onPaymentComplete={handleCashPaymentComplete}
       />
     </>
   );

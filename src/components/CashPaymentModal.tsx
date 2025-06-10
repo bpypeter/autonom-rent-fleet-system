@@ -24,6 +24,7 @@ export const CashPaymentModal: React.FC<CashPaymentModalProps> = ({
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
   const handleConfirmPayment = () => {
+    console.log('CashPaymentModal - Confirming payment, calling onPaymentComplete');
     setPaymentConfirmed(true);
     onPaymentComplete();
   };
