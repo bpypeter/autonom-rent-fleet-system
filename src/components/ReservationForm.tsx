@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useReservations } from '@/contexts/ReservationContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CardPaymentModal } from '@/components/CardPaymentModal';
 import { BankTransferModal } from '@/components/BankTransferModal';
+import { CashPaymentModal } from '@/components/CashPaymentModal';
 import { Calendar, CreditCard, Banknote, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -33,6 +33,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showCardModal, setShowCardModal] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
+  const [showCashModal, setShowCashModal] = useState(false);
   
   // Don't render if no vehicle is selected
   if (!selectedVehicle) {
@@ -74,7 +75,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
     } else if (method === 'transfer') {
       setShowBankModal(true);
     } else if (method === 'cash') {
-      handleCompleteReservation();
+      setShowCashModal(true);
     }
   };
 
@@ -121,6 +122,11 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
 
   const handleBankTransferComplete = () => {
     setShowBankModal(false);
+    handleCompleteReservation();
+  };
+
+  const handleCashPaymentComplete = () => {
+    setShowCashModal(false);
     handleCompleteReservation();
   };
 
@@ -234,6 +240,13 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
         onClose={() => setShowBankModal(false)}
         amount={calculateTotal()}
         onTransferComplete={handleBankTransferComplete}
+      />
+
+      <CashPaymentModal
+        isOpen={showCashModal}
+        onClose={() => setShowCashModal(false)}
+        amount={calculateTotal()}
+        onPaymentComplete={handleCashPaymentComplete}
       />
     </>
   );
