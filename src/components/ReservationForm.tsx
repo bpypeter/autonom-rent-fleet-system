@@ -169,7 +169,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
                 </div>
                 <div className="flex justify-between">
                   <span>Tarif zilnic:</span>
-                  <span className="font-medium">{vehicle.dailyRate} RON</span>
+                  <span className="font-medium">{selectedVehicle.dailyRate} RON</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold text-primary">
                   <span>Total:</span>
