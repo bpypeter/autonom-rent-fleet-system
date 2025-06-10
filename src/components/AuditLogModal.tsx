@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -6,26 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Search, Filter, Download } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { AuditLogFilters } from '@/components/audit/AuditLogFilters';
+import { AuditLogTable } from '@/components/audit/AuditLogTable';
 
 interface AuditLogEntry {
   id: string;
@@ -114,21 +96,6 @@ export const AuditLogModal: React.FC<AuditLogModalProps> = ({ open, onOpenChange
   const [userTypeFilter, setUserTypeFilter] = useState('all');
   const [actionFilter, setActionFilter] = useState('all');
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    applyFilters(value, userTypeFilter, actionFilter);
-  };
-
-  const handleUserTypeFilter = (value: string) => {
-    setUserTypeFilter(value);
-    applyFilters(searchTerm, value, actionFilter);
-  };
-
-  const handleActionFilter = (value: string) => {
-    setActionFilter(value);
-    applyFilters(searchTerm, userTypeFilter, value);
-  };
-
   const applyFilters = (search: string, userType: string, action: string) => {
     let filtered = logs;
 
@@ -149,6 +116,21 @@ export const AuditLogModal: React.FC<AuditLogModalProps> = ({ open, onOpenChange
     }
 
     setFilteredLogs(filtered);
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    applyFilters(value, userTypeFilter, actionFilter);
+  };
+
+  const handleUserTypeFilter = (value: string) => {
+    setUserTypeFilter(value);
+    applyFilters(searchTerm, value, actionFilter);
+  };
+
+  const handleActionFilter = (value: string) => {
+    setActionFilter(value);
+    applyFilters(searchTerm, userTypeFilter, value);
   };
 
   const exportAuditLog = () => {
@@ -172,23 +154,6 @@ export const AuditLogModal: React.FC<AuditLogModalProps> = ({ open, onOpenChange
     document.body.removeChild(link);
   };
 
-  const getActionBadgeVariant = (action: string) => {
-    switch (action) {
-      case 'CREATE':
-        return 'default';
-      case 'UPDATE':
-        return 'secondary';
-      case 'DELETE':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getUserTypeBadgeVariant = (userType: string) => {
-    return userType === 'operator' ? 'default' : 'secondary';
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
@@ -200,110 +165,17 @@ export const AuditLogModal: React.FC<AuditLogModalProps> = ({ open, onOpenChange
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Filtre și căutare */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <Label htmlFor="search">Căutare</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="Căutare după utilizator, resursă sau detalii..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            
-            <div className="w-full sm:w-48">
-              <Label htmlFor="userType">Tip Utilizator</Label>
-              <Select value={userTypeFilter} onValueChange={handleUserTypeFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toți</SelectItem>
-                  <SelectItem value="operator">Operator</SelectItem>
-                  <SelectItem value="client">Client</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <AuditLogFilters
+            searchTerm={searchTerm}
+            userTypeFilter={userTypeFilter}
+            actionFilter={actionFilter}
+            onSearchChange={handleSearch}
+            onUserTypeChange={handleUserTypeFilter}
+            onActionChange={handleActionFilter}
+            onExport={exportAuditLog}
+          />
 
-            <div className="w-full sm:w-48">
-              <Label htmlFor="action">Acțiune</Label>
-              <Select value={actionFilter} onValueChange={handleActionFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toate</SelectItem>
-                  <SelectItem value="CREATE">Creare</SelectItem>
-                  <SelectItem value="UPDATE">Actualizare</SelectItem>
-                  <SelectItem value="DELETE">Ștergere</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-end">
-              <Button 
-                variant="outline" 
-                onClick={exportAuditLog}
-                className="flex items-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Export CSV
-              </Button>
-            </div>
-          </div>
-
-          {/* Tabel jurnal */}
-          <div className="border rounded-lg overflow-hidden">
-            <div className="max-h-96 overflow-y-auto">
-              <Table>
-                <TableHeader className="sticky top-0 bg-background border-b">
-                  <TableRow>
-                    <TableHead className="w-32">Timestamp</TableHead>
-                    <TableHead>Utilizator</TableHead>
-                    <TableHead className="w-24">Tip</TableHead>
-                    <TableHead className="w-24">Acțiune</TableHead>
-                    <TableHead>Resursă</TableHead>
-                    <TableHead>Detalii</TableHead>
-                    <TableHead className="w-32">IP</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredLogs.map((log) => (
-                    <TableRow key={log.id}>
-                      <TableCell className="font-mono text-xs">
-                        {log.timestamp}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {log.user}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getUserTypeBadgeVariant(log.userType)}>
-                          {log.userType === 'operator' ? 'Operator' : 'Client'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getActionBadgeVariant(log.action)}>
-                          {log.action}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{log.resource}</TableCell>
-                      <TableCell className="max-w-md truncate">
-                        {log.details}
-                      </TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {log.ipAddress}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
+          <AuditLogTable logs={filteredLogs} />
 
           {filteredLogs.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
@@ -319,3 +191,5 @@ export const AuditLogModal: React.FC<AuditLogModalProps> = ({ open, onOpenChange
     </Dialog>
   );
 };
+
+export default AuditLogModal;
