@@ -4,10 +4,12 @@ import { VehiclesTable } from '@/components/VehiclesTable';
 import { ReservationForm } from '@/components/ReservationForm';
 import { Vehicle } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
+import { useReservations } from '@/contexts/ReservationContext';
 import { toast } from 'sonner';
 
 export const VehiclesPage: React.FC = () => {
   const { user } = useAuth();
+  const { refreshReservations } = useReservations();
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
 
   const handleVehicleSelect = (vehicle: Vehicle) => {
@@ -15,9 +17,14 @@ export const VehiclesPage: React.FC = () => {
   };
 
   const handleReservationComplete = (reservationData: any) => {
-    console.log('Reservation created:', reservationData);
+    console.log('VehiclesPage - Reservation created:', reservationData);
     toast.success(`Rezervarea ${reservationData.code} a fost creată cu succes!`);
     setSelectedVehicle(null);
+    
+    // Force refresh of reservations context
+    setTimeout(() => {
+      refreshReservations();
+    }, 100);
   };
 
   const isClient = user?.role === 'client';

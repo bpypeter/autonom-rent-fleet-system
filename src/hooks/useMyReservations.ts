@@ -13,12 +13,24 @@ export const useMyReservations = () => {
       return [];
     }
     
+    console.log('useMyReservations - Current user:', user.username, 'role:', user.role);
+    console.log('useMyReservations - Total reservations in context:', reservations.length);
+    
     // Filter reservations based on user role - Use username for matching
     const filtered = user.role === 'admin' 
       ? reservations 
-      : reservations.filter(reservation => reservation.clientId === user.username);
+      : reservations.filter(reservation => {
+          console.log('useMyReservations - Checking reservation clientId:', reservation.clientId, 'against user:', user.username);
+          return reservation.clientId === user.username;
+        });
 
     console.log(`useMyReservations - Filtered ${filtered.length} reservations for user ${user.username} (${user.role})`);
+    
+    // Log the actual reservations for debugging
+    filtered.forEach(res => {
+      console.log('useMyReservations - Reservation:', res.code, 'clientId:', res.clientId, 'status:', res.status);
+    });
+    
     return filtered;
   }, [reservations, user?.username, user?.role]);
 

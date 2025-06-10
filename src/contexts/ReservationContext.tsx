@@ -13,6 +13,7 @@ interface Reservation {
   totalAmount: number;
   status: string;
   createdAt: string;
+  observations?: string;
 }
 
 interface ReservationContextType {
@@ -20,6 +21,7 @@ interface ReservationContextType {
   addReservation: (reservation: Reservation) => void;
   updateReservation: (id: string, updates: Partial<Reservation>) => void;
   deleteReservation: (id: string) => void;
+  refreshReservations: () => void;
 }
 
 const ReservationContext = createContext<ReservationContextType | undefined>(undefined);
@@ -44,7 +46,8 @@ const convertedMockReservations: Reservation[] = mockReservations.map(reservatio
     totalDays: reservation.totalDays,
     totalAmount: reservation.totalAmount,
     status: reservation.status,
-    createdAt: reservation.createdAt
+    createdAt: reservation.createdAt,
+    observations: reservation.observations || ''
   };
 
   // Update pending reservations to start from 13.06.2025
@@ -74,7 +77,8 @@ export const ReservationProvider: React.FC<{ children: ReactNode }> = ({ childre
     console.log('ReservationContext - Adding reservation:', reservation);
     setReservations(prev => {
       const newReservations = [...prev, reservation];
-      console.log('ReservationContext - Updated reservations:', newReservations);
+      console.log('ReservationContext - Updated reservations count:', newReservations.length);
+      console.log('ReservationContext - New reservation clientId:', reservation.clientId);
       return newReservations;
     });
   };
@@ -91,14 +95,21 @@ export const ReservationProvider: React.FC<{ children: ReactNode }> = ({ childre
     setReservations(prev => prev.filter(res => res.id !== id));
   };
 
-  console.log('ReservationContext - Current reservations in context:', reservations);
+  const refreshReservations = () => {
+    console.log('ReservationContext - Refreshing reservations');
+    // Force a re-render by creating a new array reference
+    setReservations(prev => [...prev]);
+  };
+
+  console.log('ReservationContext - Current reservations:', reservations.length);
 
   return (
     <ReservationContext.Provider value={{
       reservations,
       addReservation,
       updateReservation,
-      deleteReservation
+      deleteReservation,
+      refreshReservations
     }}>
       {children}
     </ReservationContext.Provider>

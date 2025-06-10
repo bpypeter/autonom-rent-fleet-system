@@ -1,42 +1,30 @@
-import React, { useState } from 'react';
-import { useReservations } from '@/contexts/ReservationContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from 'lucide-react';
-import { toast } from 'sonner';
-import { VehicleSelectionCard } from '@/components/reservation/VehicleSelectionCard';
-import { DateSelectionSection } from '@/components/reservation/DateSelectionSection';
-import { ReservationSummary } from '@/components/reservation/ReservationSummary';
-import { PaymentMethodSection } from '@/components/reservation/PaymentMethodSection';
-import { ReservationModals } from '@/components/reservation/ReservationModals';
 
-interface Vehicle {
-  id: string;
-  brand: string;
-  model: string;
-  dailyRate: number;
-  licensePlate: string;
-}
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useReservations } from '@/contexts/ReservationContext';
+import { Vehicle } from '@/types';
 
 interface ReservationFormProps {
   selectedVehicle: Vehicle | null;
   onReservationComplete: (reservationData: any) => void;
 }
 
-export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicle, onReservationComplete }) => {
-  const { addReservation } = useReservations();
+export const ReservationForm: React.FC<ReservationFormProps> = ({
+  selectedVehicle,
+  onReservationComplete
+}) => {
   const { user } = useAuth();
+  const { addReservation } = useReservations();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [showCardModal, setShowCardModal] = useState(false);
-  const [showBankModal, setShowBankModal] = useState(false);
-  const [showCashModal, setShowCashModal] = useState(false);
-  const [reservationCode, setReservationCode] = useState('');
-  
-  if (!selectedVehicle) {
-    return <VehicleSelectionCard />;
-  }
+  const [observations, setObservations] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const calculateDays = () => {
     if (!startDate || !endDate) return 0;
@@ -47,133 +35,167 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
   };
 
   const calculateTotal = () => {
-    return calculateDays() * selectedVehicle.dailyRate;
+    const days = calculateDays();
+    const pricePerDay = selectedVehicle?.pricePerDay || 0;
+    return days * pricePerDay;
   };
 
   const generateReservationCode = () => {
-    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    return `REZ${date}-${randomNum}`;
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+    return `RES-${timestamp}-${random}`;
   };
 
-  const handlePaymentMethodSelect = (method: string) => {
-    setPaymentMethod(method);
-    const newReservationCode = generateReservationCode();
-    setReservationCode(newReservationCode);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (method === 'card') {
-      setShowCardModal(true);
-    } else if (method === 'transfer') {
-      setShowBankModal(true);
-    } else if (method === 'cash') {
-      setShowCashModal(true);
-    }
-  };
-
-  const handleCompleteReservation = () => {
-    if (!user) {
-      toast.error('Trebuie să fiți autentificat pentru a face o rezervare');
+    if (!selectedVehicle || !user?.username) {
+      console.error('ReservationForm - Missing vehicle or user data');
       return;
     }
 
-    if (!startDate || !endDate || !paymentMethod) {
-      toast.error('Vă rugăm să completați toate câmpurile');
+    if (!startDate || !endDate) {
+      console.error('ReservationForm - Missing dates');
       return;
     }
 
     if (new Date(startDate) >= new Date(endDate)) {
-      toast.error('Data de sfârșit trebuie să fie după data de început');
+      console.error('ReservationForm - Invalid date range');
       return;
     }
 
-    // Use user.username as clientId to match the mock data structure
-    const clientId = user.username;
+    setIsSubmitting(true);
 
-    const newReservation = {
-      id: `reservation_${Date.now()}`,
-      code: reservationCode,
-      clientId: clientId,
-      vehicleId: selectedVehicle.id,
-      startDate,
-      endDate,
-      totalDays: calculateDays(),
-      totalAmount: calculateTotal(),
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
+    try {
+      const reservationData = {
+        id: crypto.randomUUID(),
+        code: generateReservationCode(),
+        clientId: user.username, // Use username as clientId for matching
+        vehicleId: selectedVehicle.id,
+        startDate,
+        endDate,
+        totalDays: calculateDays(),
+        totalAmount: calculateTotal(),
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        observations: observations || ''
+      };
 
-    console.log('ReservationForm - Creating reservation with data:', newReservation);
-    console.log('ReservationForm - Current user:', user);
-    console.log('ReservationForm - User ID being used as clientId:', clientId);
-
-    addReservation(newReservation);
-    
-    toast.success(`Rezervarea ${newReservation.code} a fost creată cu succes și este în așteptarea confirmării!`);
-    onReservationComplete(newReservation);
+      console.log('ReservationForm - Creating reservation:', reservationData);
+      
+      // Add to context
+      addReservation(reservationData);
+      
+      // Call the completion handler
+      onReservationComplete(reservationData);
+      
+      // Reset form
+      setStartDate('');
+      setEndDate('');
+      setObservations('');
+      
+    } catch (error) {
+      console.error('ReservationForm - Error creating reservation:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleCardPaymentComplete = () => {
-    setShowCardModal(false);
-    handleCompleteReservation();
-  };
-
-  const handleBankTransferComplete = () => {
-    setShowBankModal(false);
-    handleCompleteReservation();
-  };
-
-  const handleCashPaymentComplete = () => {
-    setShowCashModal(false);
-    handleCompleteReservation();
-  };
-
-  return (
-    <>
-      <Card className="w-full max-w-md mx-auto">
+  if (!selectedVehicle) {
+    return (
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            Rezervare Vehicul
+            Formular Rezervare
           </CardTitle>
-          <CardDescription>
-            {selectedVehicle.brand} {selectedVehicle.model} - {selectedVehicle.licensePlate}
-          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <DateSelectionSection
-            startDate={startDate}
-            endDate={endDate}
-            onStartDateChange={setStartDate}
-            onEndDateChange={setEndDate}
-          />
-
-          {startDate && endDate && (
-            <ReservationSummary
-              days={calculateDays()}
-              dailyRate={selectedVehicle.dailyRate}
-              total={calculateTotal()}
-            />
-          )}
-
-          <PaymentMethodSection onPaymentMethodSelect={handlePaymentMethodSelect} />
+        <CardContent>
+          <p className="text-muted-foreground text-center py-8">
+            Selectați un vehicul pentru a face o rezervare
+          </p>
         </CardContent>
       </Card>
+    );
+  }
 
-      <ReservationModals
-        showCardModal={showCardModal}
-        showBankModal={showBankModal}
-        showCashModal={showCashModal}
-        amount={calculateTotal()}
-        reservationCode={reservationCode}
-        onCloseCardModal={() => setShowCardModal(false)}
-        onCloseBankModal={() => setShowBankModal(false)}
-        onCloseCashModal={() => setShowCashModal(false)}
-        onCardPaymentComplete={handleCardPaymentComplete}
-        onBankTransferComplete={handleBankTransferComplete}
-        onCashPaymentComplete={handleCashPaymentComplete}
-      />
-    </>
+  const totalDays = calculateDays();
+  const totalAmount = calculateTotal();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Calendar className="w-5 h-5" />
+          Rezervare pentru {selectedVehicle.brand} {selectedVehicle.model}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startDate">Data început</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="endDate">Data sfârșit</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                min={startDate || new Date().toISOString().split('T')[0]}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="observations">Observații (opțional)</Label>
+            <Textarea
+              id="observations"
+              value={observations}
+              onChange={(e) => setObservations(e.target.value)}
+              placeholder="Observații sau cerințe speciale..."
+              rows={3}
+            />
+          </div>
+
+          {totalDays > 0 && (
+            <div className="p-4 bg-muted rounded-lg">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Număr zile:</span>
+                  <span className="font-medium">{totalDays}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Preț per zi:</span>
+                  <span className="font-medium">{selectedVehicle.pricePerDay} RON</span>
+                </div>
+                <div className="flex justify-between border-t pt-2">
+                  <span className="font-semibold">Total:</span>
+                  <span className="font-bold text-lg">{totalAmount} RON</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={!startDate || !endDate || isSubmitting || totalDays <= 0}
+          >
+            {isSubmitting ? 'Se creează rezervarea...' : 'Creează Rezervarea'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
-
-export default ReservationForm;
