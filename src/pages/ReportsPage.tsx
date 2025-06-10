@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { mockVehicles, mockReservations, mockPayments, mockClients } from '@/data/mockData';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { Download, TrendingUp, Calendar, DollarSign, Car } from 'lucide-react';
+import { generateReportsData, downloadPDF } from '@/utils/reportUtils';
+import { toast } from 'sonner';
 
 export const ReportsPage: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState('monthly');
@@ -49,6 +51,17 @@ export const ReportsPage: React.FC = () => {
   }));
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+
+  const handleExportPDF = () => {
+    try {
+      const reportData = generateReportsData();
+      downloadPDF(reportData, `raport-companie-${new Date().toISOString().split('T')[0]}`);
+      toast.success('Raportul PDF a fost exportat cu succes!');
+    } catch (error) {
+      toast.error('Eroare la exportul raportului PDF');
+      console.error('PDF export error:', error);
+    }
+  };
 
   // Function to translate status to Romanian
   function getStatusLabel(status: string): string {
@@ -99,7 +112,7 @@ export const ReportsPage: React.FC = () => {
               <SelectItem value="yearly">Anual</SelectItem>
             </SelectContent>
           </Select>
-          <Button className="text-xs sm:text-sm">
+          <Button className="text-xs sm:text-sm" onClick={handleExportPDF}>
             <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Export PDF
           </Button>

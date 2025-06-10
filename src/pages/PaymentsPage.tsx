@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { InvoiceModal } from '@/components/InvoiceModal';
 import { mockPayments, mockReservations, mockClients } from '@/data/mockData';
 import { Search, Filter, Download, CreditCard, DollarSign, TrendingUp, FileText, Eye } from 'lucide-react';
+import { generatePaymentsReport, downloadCSV } from '@/utils/reportUtils';
+import { toast } from 'sonner';
 
 export const PaymentsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,6 +35,17 @@ export const PaymentsPage: React.FC = () => {
 
   const totalAmount = mockPayments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
   const pendingAmount = mockPayments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0);
+
+  const handleExportReport = () => {
+    try {
+      const reportData = generatePaymentsReport();
+      downloadCSV(reportData, `raport-plati-${new Date().toISOString().split('T')[0]}`);
+      toast.success('Raportul a fost exportat cu succes!');
+    } catch (error) {
+      toast.error('Eroare la exportul raportului');
+      console.error('Export error:', error);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -97,7 +109,7 @@ export const PaymentsPage: React.FC = () => {
             Vizualizați și gestionați toate plățile
           </p>
         </div>
-        <Button>
+        <Button onClick={handleExportReport}>
           <Download className="w-4 h-4 mr-2" />
           Export Raport
         </Button>
