@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -129,8 +130,8 @@ export const FleetManagementPage: React.FC = () => {
               {mockVehicles.filter(v => v.status === 'maintenance').length}
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground">Service</p>
-          </Card>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
