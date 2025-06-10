@@ -86,10 +86,13 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
       return;
     }
 
+    // Use user.username as clientId to match the mock data structure
+    const clientId = user.username;
+
     const newReservation = {
       id: `reservation_${Date.now()}`,
       code: reservationCode,
-      clientId: user.id,
+      clientId: clientId,
       vehicleId: selectedVehicle.id,
       startDate,
       endDate,
@@ -101,7 +104,7 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
 
     console.log('ReservationForm - Creating reservation with data:', newReservation);
     console.log('ReservationForm - Current user:', user);
-    console.log('ReservationForm - User ID being used:', user.id);
+    console.log('ReservationForm - User ID being used as clientId:', clientId);
 
     addReservation(newReservation);
     
@@ -172,3 +175,5 @@ export const ReservationForm: React.FC<ReservationFormProps> = ({ selectedVehicl
     </>
   );
 };
+
+export default ReservationForm;

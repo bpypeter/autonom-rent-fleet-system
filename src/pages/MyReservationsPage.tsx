@@ -25,7 +25,7 @@ export const MyReservationsPage: React.FC = () => {
   // Debug logging
   console.log('MyReservationsPage - DEBUG START');
   console.log('MyReservationsPage - Current user:', user);
-  console.log('MyReservationsPage - User ID:', user?.id);
+  console.log('MyReservationsPage - User username:', user?.username);
   console.log('MyReservationsPage - User role:', user?.role);
   console.log('MyReservationsPage - All reservations from context:', reservations);
   
@@ -35,16 +35,16 @@ export const MyReservationsPage: React.FC = () => {
       id: reservation.id,
       clientId: reservation.clientId,
       code: reservation.code,
-      matchesUser: reservation.clientId === user?.id
+      matchesUser: reservation.clientId === user?.username
     });
   });
 
-  // Filter reservations based on user role - Fixed logic
+  // Filter reservations based on user role - Use username for matching
   const userReservations = user?.role === 'admin' 
     ? reservations 
     : reservations.filter(reservation => {
-        console.log(`MyReservationsPage - Filtering reservation ${reservation.code}: clientId=${reservation.clientId}, userId=${user?.id}, matches=${reservation.clientId === user?.id}`);
-        return reservation.clientId === user?.id;
+        console.log(`MyReservationsPage - Filtering reservation ${reservation.code}: clientId=${reservation.clientId}, username=${user?.username}, matches=${reservation.clientId === user?.username}`);
+        return reservation.clientId === user?.username;
       });
 
   console.log('MyReservationsPage - User reservations after filtering:', userReservations);
