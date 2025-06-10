@@ -67,6 +67,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('autonom_user');
+    // Force page reload to ensure complete state reset
+    window.location.href = '/login';
   };
 
   return (
