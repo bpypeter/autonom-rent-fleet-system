@@ -58,10 +58,10 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                   <p className="text-muted-foreground">Data: {invoice.date}</p>
                 </div>
                 <div className="text-right">
-                  <h3 className="font-bold">RENT A CAR SRL</h3>
-                  <p className="text-sm text-muted-foreground">Str. Exemplu Nr. 123</p>
-                  <p className="text-sm text-muted-foreground">București, România</p>
-                  <p className="text-sm text-muted-foreground">CUI: RO12345678</p>
+                  <h3 className="font-bold">AUTONOM SERVICES SA</h3>
+                  <p className="text-sm text-muted-foreground">Str. Fermelor 4, Cod 610145</p>
+                  <p className="text-sm text-muted-foreground">Loc. Piatra Neamt, Judeţ Neamt</p>
+                  <p className="text-sm text-muted-foreground">CUI: RO18433260</p>
                 </div>
               </div>
 

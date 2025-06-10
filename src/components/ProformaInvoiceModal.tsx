@@ -52,11 +52,12 @@ export const ProformaInvoiceModal: React.FC<ProformaInvoiceModalProps> = ({
           {/* Header */}
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="font-bold text-lg">AUTO RENTAL SRL</h3>
-              <p className="text-sm">CUI: RO12345678</p>
-              <p className="text-sm">Reg. Com.: J12/345/2023</p>
-              <p className="text-sm">Adresa: Str. Principală, Nr. 1, București</p>
-              <p className="text-sm">Email: contact@autorental.ro</p>
+              <h3 className="font-bold text-lg">AUTONOM SERVICES SA</h3>
+              <p className="text-sm">CUI: RO18433260</p>
+              <p className="text-sm">Reg. Com.: J2006000280271</p>
+              <p className="text-sm">Adresa: Str. Fermelor 4, Cod 610145</p>
+              <p className="text-sm">Loc. Piatra Neamt, Judeţ Neamt</p>
+              <p className="text-sm">Email: contact@autonomservices.ro</p>
             </div>
             <div className="text-right">
               <h2 className="font-bold text-xl">FACTURĂ PROFORMA</h2>
@@ -76,10 +77,11 @@ export const ProformaInvoiceModal: React.FC<ProformaInvoiceModalProps> = ({
                 <BuildingIcon className="w-4 h-4" />
                 <h3 className="font-medium">FURNIZOR</h3>
               </div>
-              <p className="text-sm font-medium">AUTO RENTAL SRL</p>
-              <p className="text-sm">CUI: RO12345678</p>
-              <p className="text-sm">Reg. Com.: J12/345/2023</p>
-              <p className="text-sm">Adresa: Str. Principală, Nr. 1, București</p>
+              <p className="text-sm font-medium">AUTONOM SERVICES SA</p>
+              <p className="text-sm">CUI: RO18433260</p>
+              <p className="text-sm">Reg. Com.: J2006000280271</p>
+              <p className="text-sm">Adresa: Str. Fermelor 4, Cod 610145</p>
+              <p className="text-sm">Loc. Piatra Neamt, Judeţ Neamt</p>
               <p className="text-sm">Cont: RO12INGB0000999123456789</p>
               <p className="text-sm">Banca: ING Bank</p>
             </div>
@@ -168,7 +170,7 @@ export const ProformaInvoiceModal: React.FC<ProformaInvoiceModalProps> = ({
               <h3 className="font-medium">INFORMAȚII PLATĂ</h3>
             </div>
             <p className="text-sm">Metodă de plată: Transfer bancar</p>
-            <p className="text-sm">Beneficiar: AUTO RENTAL SRL</p>
+            <p className="text-sm">Beneficiar: AUTONOM SERVICES SA</p>
             <p className="text-sm">Cont: RO12INGB0000999123456789</p>
             <p className="text-sm">Banca: ING Bank</p>
             <p className="text-sm font-medium mt-1">Vă rugăm să menționați numărul facturii proforma ({invoiceNumber}) la efectuarea plății.</p>

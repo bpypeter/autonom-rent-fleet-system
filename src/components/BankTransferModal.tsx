@@ -23,7 +23,7 @@ export const BankTransferModal: React.FC<BankTransferModalProps> = ({
 
   const bankDetails = {
     bankName: 'Banca Transilvania',
-    accountHolder: 'SC RENT CAR SRL',
+    accountHolder: 'AUTONOM SERVICES SA',
     iban: 'RO49BTRLRONCRT0123456789',
     bic: 'BTRLRO22',
     reference: `REZ-${Date.now().toString().slice(-6)}`
