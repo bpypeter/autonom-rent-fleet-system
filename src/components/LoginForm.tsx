@@ -36,7 +36,7 @@ export const LoginForm: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md mx-auto space-y-6">
         {/* Logo and Title */}
         <div className="text-center">
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4">
@@ -47,7 +47,7 @@ export const LoginForm: React.FC = () => {
         </div>
 
         {/* Login Form */}
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>Autentificare</CardTitle>
             <CardDescription>
@@ -94,7 +94,7 @@ export const LoginForm: React.FC = () => {
         </Card>
 
         {/* Help Text */}
-        <Card>
+        <Card className="shadow-sm">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground text-center">
               Pentru testare, utilizați conturile: <br />
