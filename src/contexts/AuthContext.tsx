@@ -69,10 +69,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     localStorage.removeItem('autonom_user');
     localStorage.clear();
-    // Force immediate redirect
-    setTimeout(() => {
-      window.location.href = '/login';
-    }, 0);
+    // Force immediate redirect to login
+    window.location.href = '/login';
   };
 
   return (
