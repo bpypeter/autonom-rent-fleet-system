@@ -12,6 +12,12 @@ export const useMyReservations = () => {
     console.log('useMyReservations - User:', user?.username, 'role:', user?.role);
     console.log('useMyReservations - Total reservations in context:', reservations.length);
     
+    // Log ALL reservations to see what's available
+    console.log('useMyReservations - ALL RESERVATIONS IN CONTEXT:');
+    reservations.forEach((res, index) => {
+      console.log(`  ${index + 1}. Code: ${res.code}, ClientId: "${res.clientId}", Status: ${res.status}`);
+    });
+    
     if (!user?.username) {
       console.log('useMyReservations - No user username available');
       return [];
@@ -30,7 +36,7 @@ export const useMyReservations = () => {
       const matches = reservation.clientId === 'client';
       console.log('useMyReservations - Checking reservation:', {
         code: reservation.code,
-        clientId: reservation.clientId,
+        clientId: `"${reservation.clientId}"`,
         matches: matches
       });
       return matches;
@@ -44,10 +50,7 @@ export const useMyReservations = () => {
         console.log('  - Code:', res.code, 'ClientId:', res.clientId, 'Status:', res.status);
       });
     } else {
-      console.log('useMyReservations - No reservations found! Checking all reservations:');
-      reservations.forEach(res => {
-        console.log('  - Code:', res.code, 'ClientId:', res.clientId);
-      });
+      console.log('useMyReservations - No reservations found with clientId "client"!');
     }
     
     return filtered;
