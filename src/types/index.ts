@@ -33,6 +33,7 @@ export interface Vehicle {
   transmission: string;
   seats: number;
   dailyRate: number;
+  pricePerDay: number; // Added for compatibility
   status: 'available' | 'rented' | 'maintenance' | 'inactive';
   mileage: number;
   lastService: string;
@@ -50,6 +51,7 @@ export interface Reservation {
   dailyRate: number;
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
+  observations?: string; // Added observations field
   createdAt: string;
 }
 
