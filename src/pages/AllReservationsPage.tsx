@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
+import { ReservationDocumentsDropdown } from '@/components/documents/ReservationDocumentsDropdown';
 import { useReservations } from '@/contexts/ReservationContext';
 import { mockClients, mockVehicles } from '@/data/mockData';
 import { Search, Filter, Eye, Edit, Trash2, Check, X, Car, Calendar, DollarSign, ChevronDown } from 'lucide-react';
@@ -179,6 +180,15 @@ export const AllReservationsPage: React.FC = () => {
                       </div>
                     </div>
 
+                    {/* Documents section for mobile */}
+                    <div className="pt-2 border-t">
+                      <ReservationDocumentsDropdown
+                        reservationId={reservation.id}
+                        reservationCode={reservation.code}
+                        clientName={client?.name || 'Client necunoscut'}
+                      />
+                    </div>
+
                     <div className="flex flex-col gap-2 pt-2 border-t">
                       {reservation.status === 'pending' && (
                         <div className="flex gap-2">
@@ -270,6 +280,7 @@ export const AllReservationsPage: React.FC = () => {
                   <TableHead className="text-xs">Perioada</TableHead>
                   <TableHead className="text-xs">Total</TableHead>
                   <TableHead className="text-xs">Status</TableHead>
+                  <TableHead className="text-xs">Documente</TableHead>
                   <TableHead className="text-xs">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
@@ -301,6 +312,13 @@ export const AllReservationsPage: React.FC = () => {
                       </TableCell>
                       <TableCell className="font-medium text-xs">{reservation.totalAmount} RON</TableCell>
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
+                      <TableCell>
+                        <ReservationDocumentsDropdown
+                          reservationId={reservation.id}
+                          reservationCode={reservation.code}
+                          clientName={client?.name || 'Client necunoscut'}
+                        />
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
                           {reservation.status === 'pending' && (

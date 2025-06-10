@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ReservationDetailsModal } from '@/components/ReservationDetailsModal';
 import { ProformaInvoiceModal } from '@/components/ProformaInvoiceModal';
 import { DocumentsDropdown } from '@/components/documents/DocumentsDropdown';
+import { ReservationDocumentsDropdown } from '@/components/documents/ReservationDocumentsDropdown';
 import { useReservations } from '@/contexts/ReservationContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockClients, mockVehicles } from '@/data/mockData';
@@ -228,8 +229,13 @@ export const MyReservationsPage: React.FC = () => {
                     </div>
 
                     {/* Documents section for mobile */}
-                    <div className="pt-2 border-t">
+                    <div className="pt-2 border-t space-y-2">
                       <DocumentsDropdown
+                        reservationId={reservation.id}
+                        reservationCode={reservation.code}
+                        clientName={client?.name || 'Client necunoscut'}
+                      />
+                      <ReservationDocumentsDropdown
                         reservationId={reservation.id}
                         reservationCode={reservation.code}
                         clientName={client?.name || 'Client necunoscut'}
@@ -253,6 +259,7 @@ export const MyReservationsPage: React.FC = () => {
                   <TableHead className="text-xs whitespace-nowrap">Total</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Status</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Documente</TableHead>
+                  <TableHead className="text-xs whitespace-nowrap">Documente Rezervare</TableHead>
                   <TableHead className="text-xs whitespace-nowrap">Acțiuni</TableHead>
                 </TableRow>
               </TableHeader>
@@ -290,6 +297,13 @@ export const MyReservationsPage: React.FC = () => {
                       <TableCell>{getStatusBadge(reservation.status)}</TableCell>
                       <TableCell>
                         <DocumentsDropdown
+                          reservationId={reservation.id}
+                          reservationCode={reservation.code}
+                          clientName={client?.name || 'Client necunoscut'}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <ReservationDocumentsDropdown
                           reservationId={reservation.id}
                           reservationCode={reservation.code}
                           clientName={client?.name || 'Client necunoscut'}
