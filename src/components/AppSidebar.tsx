@@ -36,7 +36,7 @@ const data = {
       title: "Vehicule",
       url: "/vehicles",
       icon: Car,
-      roles: ['operator', 'client']
+      roles: ['client']
     },
     {
       title: "Rezervările Mele",
@@ -54,7 +54,7 @@ const data = {
       title: "Gestionare Flotă",
       url: "/fleet",
       icon: Car,
-      roles: ['admin']
+      roles: ['admin', 'operator']
     },
     {
       title: "Returnări Vehicule",
