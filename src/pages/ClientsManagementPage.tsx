@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ClientDetailsModal } from '@/components/ClientDetailsModal';
 import { AddClientForm } from '@/components/AddClientForm';
 import { EditClientForm } from '@/components/EditClientForm';
@@ -94,6 +95,11 @@ export const ClientsManagementPage: React.FC = () => {
   const handleClientUpdated = () => {
     setEditingClient(null);
     setShowEditClient(false);
+  };
+
+  const handleClientAdded = () => {
+    setShowAddClient(false);
+    toast.success('Clientul a fost adăugat cu succes!');
   };
 
   return (
@@ -278,12 +284,17 @@ export const ClientsManagementPage: React.FC = () => {
         }}
       />
 
-      {showAddClient && (
-        <AddClientForm 
-          onClose={() => setShowAddClient(false)}
-          onClientAdded={() => setShowAddClient(false)}
-        />
-      )}
+      <Dialog open={showAddClient} onOpenChange={setShowAddClient}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Adaugă Client Nou</DialogTitle>
+          </DialogHeader>
+          <AddClientForm 
+            onClose={() => setShowAddClient(false)}
+            onClientAdded={handleClientAdded}
+          />
+        </DialogContent>
+      </Dialog>
 
       <EditClientForm
         client={editingClient}
