@@ -36,7 +36,7 @@ const data = {
       title: "Vehicule",
       url: "/vehicles",
       icon: Car,
-      roles: ['admin', 'operator', 'client']
+      roles: ['operator', 'client']
     },
     {
       title: "Rezervările Mele",
